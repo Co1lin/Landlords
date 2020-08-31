@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include <QtNetwork>
+
 namespace Ui {
 class ServerWindow;
 }
@@ -15,8 +17,15 @@ public:
     explicit ServerWindow(QWidget *parent = nullptr);
     ~ServerWindow();
 
+private slots:
+    void acceptConnection();
+    void on_pushButton_clicked();
+
 private:
     Ui::ServerWindow *ui;
+
+    QTcpServer* server;
+    QVector<QTcpSocket*> sockets;
 };
 
 #endif // SERVERWINDOW_H

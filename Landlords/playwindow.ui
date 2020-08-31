@@ -1,9 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <author/>
- <comment/>
- <exportmacro/>
  <class>PlayWindow</class>
- <widget name="PlayWindow" class="QMainWindow">
+ <widget class="QMainWindow" name="PlayWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -15,10 +13,80 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget name="menubar" class="QMenuBar"/>
-  <widget name="centralwidget" class="QWidget"/>
-  <widget name="statusbar" class="QStatusBar"/>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="8">
+     <widget class="QGraphicsView" name="player1GraphicsView"/>
+    </item>
+    <item row="0" column="1">
+     <widget class="QGraphicsView" name="player2GraphicsView"/>
+    </item>
+    <item row="9" column="0" colspan="9">
+     <widget class="QGraphicsView" name="myCardsGraphicsView"/>
+    </item>
+    <item row="2" column="1" rowspan="5" colspan="7">
+     <widget class="QGraphicsView" name="cardsGraphicsView"/>
+    </item>
+    <item row="8" column="1">
+     <spacer name="verticalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Preferred</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>13</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="6" column="8">
+     <widget class="QGraphicsView" name="player0GraphicsView"/>
+    </item>
+    <item row="7" column="5" colspan="2">
+     <widget class="QLabel" name="noticeLabel">
+      <property name="text">
+       <string>Notice</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="8">
+     <widget class="QPushButton" name="yesPushButton">
+      <property name="text">
+       <string>Yes</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QPushButton" name="noPushButton">
+      <property name="text">
+       <string>No</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="5">
+     <widget class="QGraphicsView" name="bonusCardsGraphicsView"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <pixmapfunction/>
+ <resources/>
  <connections/>
 </ui>

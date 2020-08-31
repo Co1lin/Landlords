@@ -15,6 +15,11 @@ public:
     explicit ConnetWindow(QWidget *parent = nullptr);
     ~ConnetWindow();
 
+private slots:
+    void on_serverPushButton_clicked();
+
+    void on_clientPushButton_clicked();
+
 private:
     Ui::ConnetWindow *ui;
 };
