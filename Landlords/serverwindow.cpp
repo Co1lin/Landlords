@@ -47,7 +47,8 @@ void ServerWindow::acceptConnection()
         int tmp;
         foreach (auto* socket, sockets)
         {
-            data.append(QString::number(id));
+            stream << id;
+            //data.append(QString::number(id));
             //socket->write(QByteArray::number(id));
             socket->write(data);
             connect(socket, &QTcpSocket::disconnected, [=]
@@ -56,6 +57,7 @@ void ServerWindow::acceptConnection()
             });
             data.clear();
             id++;
+            stream.device()->seek(0);
         }
         qDebug() << "written";
         id = 0;

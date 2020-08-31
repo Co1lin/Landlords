@@ -58,6 +58,12 @@
     </item>
     <item row="7" column="8">
      <widget class="QPushButton" name="yesPushButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>Yes</string>
       </property>
@@ -65,6 +71,12 @@
     </item>
     <item row="7" column="1">
      <widget class="QPushButton" name="noPushButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>No</string>
       </property>

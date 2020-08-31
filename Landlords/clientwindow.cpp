@@ -38,11 +38,11 @@ void ClientWindow::readMessage()
 {
     QDataStream stream(client);
     stream.setVersion(QDataStream::Qt_5_13);
-    QString id;
+    int id;
     stream >> id;
-    qDebug() << "Received id: " + id;
-    auto play = new PlayWindow(nullptr, id.toInt());
-    play->setWindowTitle("Player " + id);
+    qDebug() << "Received id: " + QString::number(id);
+    auto play = new PlayWindow(nullptr, id);
+    play->setWindowTitle("Player " + QString::number(id));
     play->show();
     this->close();
 }

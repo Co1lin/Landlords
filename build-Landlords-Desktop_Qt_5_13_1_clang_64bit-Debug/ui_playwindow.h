@@ -87,11 +87,18 @@ public:
 
         yesPushButton = new QPushButton(centralwidget);
         yesPushButton->setObjectName(QString::fromUtf8("yesPushButton"));
+        QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(yesPushButton->sizePolicy().hasHeightForWidth());
+        yesPushButton->setSizePolicy(sizePolicy);
 
         gridLayout->addWidget(yesPushButton, 7, 8, 1, 1);
 
         noPushButton = new QPushButton(centralwidget);
         noPushButton->setObjectName(QString::fromUtf8("noPushButton"));
+        sizePolicy.setHeightForWidth(noPushButton->sizePolicy().hasHeightForWidth());
+        noPushButton->setSizePolicy(sizePolicy);
 
         gridLayout->addWidget(noPushButton, 7, 1, 1, 1);
 
