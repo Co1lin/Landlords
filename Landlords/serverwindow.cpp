@@ -83,47 +83,5 @@ void ServerWindow::receivePackage(DataPackage data)
 
 void ServerWindow::haveMessageToRead(QTcpSocket* socket, const int id)
 {
-//    QDataStream in(socket);
-//    static qint32 bytesToRead = 0;
-//    if (socket->bytesAvailable() < sizeof(qint32))
-//        return;
-//    while (socket->bytesAvailable())
-//    {
-//        if (socket->bytesAvailable() >= sizeof(qint32) && bytesToRead == 0)
-//        {
-//            in >> bytesToRead;
-//        }
-//        if (socket->bytesAvailable() >= bytesToRead && bytesToRead != 0)
-//        {
-//            int received = 100;
-//            qDebug() << "socket->bytesAvailable()";
-//            qDebug() << socket->bytesAvailable();
-//            //in >> received;
-//            char temp[10] = { 0 };
-//            in.readRawData(temp, 4);
-//            QByteArray buffer(temp, 4);
-//            QDataStream stream(&buffer, QIODevice::ReadWrite);
-//            stream >> received;
-//            if (received < 100)
-//                qDebug() << "confirmed: " << ++confirmed << received;
-//            if (confirmed == 6)
-//                qDebug() << "all players connected!";
-
-//            bytesToRead = 0;
-//        }
-//    }
-    //DataPackage receivedData(-1);
     myTool.read(socket);
-//    if (receivedData.id != id)
-//    {
-//        qDebug() << "Error: id doesn't match!";
-//        return;
-//    }
-//    if (receivedData.type == 0)
-//    {
-//        qDebug() << "confirmed: " << ++confirmed << id;
-//        if (confirmed == 6)
-//            qDebug() << "all players has been ready!";
-//    }
-
 }
