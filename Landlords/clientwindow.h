@@ -16,6 +16,8 @@ public:
     explicit ClientWindow(QWidget *parent = nullptr);
     ~ClientWindow();
 
+    void clickConnectButton();
+
 private slots:
     void on_pushButton_clicked();
     void displayError(QAbstractSocket::SocketError);
@@ -24,7 +26,7 @@ private slots:
 private:
     Ui::ClientWindow *ui;
 
-    QTcpSocket* client;
+    QTcpSocket* clientSocket;
 
 };
 

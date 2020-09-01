@@ -29,3 +29,11 @@ void ConnetWindow::on_clientPushButton_clicked()
     clientWindow->show();
     this->close();
 }
+
+void ConnetWindow::setMode(const QString &mode)
+{
+    if (mode == "server")
+        ui->serverPushButton->click();
+    if (mode == "client")
+        ui->clientPushButton->click();
+}

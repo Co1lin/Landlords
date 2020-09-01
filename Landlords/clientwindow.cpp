@@ -9,11 +9,15 @@ ClientWindow::ClientWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    client = new QTcpSocket();
-    connect(client, &QTcpSocket::connected, [=]{ qDebug() << "connected"; });
-    connect(client,SIGNAL(error(QAbstractSocket::SocketError)),this,
+    clientSocket = new QTcpSocket();
+    // connected with the server
+    connect(clientSocket, &QTcpSocket::connected, [=]{ qDebug() << "connected"; });
+    connect(clientSocket,SIGNAL(error(QAbstractSocket::SocketError)),this,
            SLOT(displayError(QAbstractSocket::SocketError)));
-    connect(client, &QTcpSocket::readyRead, this, &ClientWindow::readMessage);
+    // "new data is available for reading from the device's current read channel"
+    connect(clientSocket, &QTcpSocket::readyRead, this, &ClientWindow::readMessage);
+
+    ui->pushButton->click();
 }
 
 ClientWindow::~ClientWindow()
@@ -23,26 +27,31 @@ ClientWindow::~ClientWindow()
 
 void ClientWindow::on_pushButton_clicked()
 {
-    client->close();
-    client->connectToHost(ui->hostLineEdit->text(), ui->portLineEdit->text().toInt());
+    clientSocket->close();
+    clientSocket->connectToHost(ui->hostLineEdit->text(), ui->portLineEdit->text().toInt());
     qDebug() << "Client connects to " << ui->hostLineEdit->text() << ": " << ui->portLineEdit->text().toInt();
 }
 
 void ClientWindow::displayError(QAbstractSocket::SocketError) //显示错误
 {
-    qDebug() << client->errorString();
-    client->close();
+    qDebug() << "error" << clientSocket->errorString();
+    clientSocket->close();
 }
 
 void ClientWindow::readMessage()
 {
-    QDataStream stream(client);
+    QDataStream stream(clientSocket);
     stream.setVersion(QDataStream::Qt_5_13);
     int id;
     stream >> id;
     qDebug() << "Received id: " + QString::number(id);
-    auto play = new PlayWindow(nullptr, id);
+    auto play = new PlayWindow(nullptr, id, clientSocket);
     play->setWindowTitle("Player " + QString::number(id));
     play->show();
     this->close();
+}
+
+void ClientWindow::clickConnectButton()
+{
+    ui->pushButton->click();
 }

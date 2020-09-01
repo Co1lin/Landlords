@@ -21,6 +21,7 @@ SOURCES += \
     connetwindow.cpp \
     main.cpp \
     mainwindow.cpp \
+    mytools.cpp \
     playwindow.cpp \
     serverwindow.cpp
 
@@ -28,6 +29,7 @@ HEADERS += \
     clientwindow.h \
     connetwindow.h \
     mainwindow.h \
+    mytools.h \
     playwindow.h \
     serverwindow.h
 
@@ -42,3 +44,6 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    cards.qrc

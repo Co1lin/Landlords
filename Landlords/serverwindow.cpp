@@ -2,6 +2,8 @@
 #include "ui_serverwindow.h"
 
 #include "playwindow.h"
+#include "clientwindow.h"
+#include "mytools.h"
 
 ServerWindow::ServerWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -9,7 +11,8 @@ ServerWindow::ServerWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    server = new QTcpServer();
+    serverSocket = new QTcpServer();
+    ui->pushButton->click();
 }
 
 ServerWindow::~ServerWindow()
@@ -19,51 +22,108 @@ ServerWindow::~ServerWindow()
 
 void ServerWindow::on_pushButton_clicked()
 {
-    server->close();
-    if (!server->listen(QHostAddress::AnyIPv4, 6666))
+    serverSocket->close();
+    if (!serverSocket->listen(QHostAddress::AnyIPv4, 6666))
     {
-        qDebug() << server->errorString();
+        qDebug() << serverSocket->errorString();
         return;
     }
-    connect(server, &QTcpServer::newConnection, this, &ServerWindow::acceptConnection);
+    connect(serverSocket, &QTcpServer::newConnection, this, &ServerWindow::acceptConnection);
+    confirmed = 0;
+    auto myself = new ClientWindow();
+    // myself->clickConnectButton();
 }
 
 void ServerWindow::acceptConnection()
 {
-    qDebug() << "accepted";
-    sockets.push_back(server->nextPendingConnection());
+    qDebug() << "accepted a connection";
+    sockets.push_back(serverSocket->nextPendingConnection());
     ui->listWidget->addItem(sockets.last()->peerAddress().toString() + ": " + QString::number(sockets.last()->peerPort()));
-//    connect(sockets.last(), &QTcpSocket::readyRead, this, [=]
-//    {
-//        qDebug() << "server readyread";
-//    });
-    if (sockets.size() == 2)
+    if (sockets.size() == 3)
     {
+        qDebug() << "Three players are here!";
+        connect(&myTool, &MyTools::transferPackage, this, &ServerWindow::receivePackage);
         QByteArray data;
         QDataStream stream(&data, QIODevice::WriteOnly);
         stream.setVersion(QDataStream::Qt_5_13);
-        // stream << "Start game!";
-        int id = 1;
-        int tmp;
+        int id = 0;
         foreach (auto* socket, sockets)
         {
             stream << id;
-            //data.append(QString::number(id));
-            //socket->write(QByteArray::number(id));
             socket->write(data);
             connect(socket, &QTcpSocket::disconnected, [=]
             {
                 qDebug() << id << " disconnected";
             });
             data.clear();
-            id++;
+            // "new data is available for reading from the device's current read channel"
+            connect(socket, &QTcpSocket::readyRead, this, [=]
+            {
+                haveMessageToRead(socket, id);
+            });
             stream.device()->seek(0);
+            id++;
         }
         qDebug() << "written";
-        id = 0;
-        auto play = new PlayWindow(nullptr, id);
-        play->setWindowTitle("Server & Player " + QString::number(id));
-        play->show();
         this->close();
     }
+}
+
+void ServerWindow::receivePackage(DataPackage data)
+{
+    qDebug() << "received one!";
+    if (data.type == 0)
+    {
+        qDebug() << "confirmed: " << ++confirmed << data.id;
+        if (confirmed == 6)
+            qDebug() << "all players has been ready!";
+    }
+
+}
+
+void ServerWindow::haveMessageToRead(QTcpSocket* socket, const int id)
+{
+//    QDataStream in(socket);
+//    static qint32 bytesToRead = 0;
+//    if (socket->bytesAvailable() < sizeof(qint32))
+//        return;
+//    while (socket->bytesAvailable())
+//    {
+//        if (socket->bytesAvailable() >= sizeof(qint32) && bytesToRead == 0)
+//        {
+//            in >> bytesToRead;
+//        }
+//        if (socket->bytesAvailable() >= bytesToRead && bytesToRead != 0)
+//        {
+//            int received = 100;
+//            qDebug() << "socket->bytesAvailable()";
+//            qDebug() << socket->bytesAvailable();
+//            //in >> received;
+//            char temp[10] = { 0 };
+//            in.readRawData(temp, 4);
+//            QByteArray buffer(temp, 4);
+//            QDataStream stream(&buffer, QIODevice::ReadWrite);
+//            stream >> received;
+//            if (received < 100)
+//                qDebug() << "confirmed: " << ++confirmed << received;
+//            if (confirmed == 6)
+//                qDebug() << "all players connected!";
+
+//            bytesToRead = 0;
+//        }
+//    }
+    //DataPackage receivedData(-1);
+    myTool.read(socket);
+//    if (receivedData.id != id)
+//    {
+//        qDebug() << "Error: id doesn't match!";
+//        return;
+//    }
+//    if (receivedData.type == 0)
+//    {
+//        qDebug() << "confirmed: " << ++confirmed << id;
+//        if (confirmed == 6)
+//            qDebug() << "all players has been ready!";
+//    }
+
 }
