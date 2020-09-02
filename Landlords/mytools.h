@@ -2,11 +2,19 @@
 #define MYTOOLS_H
 
 #include <QtNetwork>
+#include <QGraphicsItem>
+
 
 class Card
 {
 public:
-    int pattern;
+    Card() {}
+    Card (const QChar &_pattern, const int _number):
+        pattern(_pattern), number(_number)
+    {}
+
+public:
+    QChar pattern;
     /*
      * king:    0
      * spade:   1
@@ -23,6 +31,25 @@ public:
      * red joker:       17
      */
 
+    QString name() const
+    {
+        return pattern + QString::number(number);
+    }
+
+    bool operator<(const Card& _y) const
+    {
+        return number < _y.number;
+    }
+
+    bool operator>(const Card& _y) const
+    {
+        return number > _y.number;
+    }
+
+//    bool operator==(const Card& _y)
+//    {
+//        return number == _y.number;
+//    }
 
     friend QDataStream& operator>>(QDataStream& in, Card& _card)
     {
@@ -37,6 +64,7 @@ public:
     }
 
 };
+
 
 class DataPackage
 {
@@ -54,6 +82,11 @@ public:
     {
         type = -1;
         cards.clear();
+    }
+
+    void sortCards(std::function<bool (Card, Card)> cmp = std::greater<Card>())
+    {
+        qSort(cards.begin(), cards.end(), cmp);
     }
 
     friend QDataStream& operator>>(QDataStream& in, DataPackage& _data)
@@ -84,6 +117,8 @@ public:
     {
         QByteArray bytes;
         QDataStream stream(&bytes, QIODevice::WriteOnly);
+        stream.setVersion(QDataStream::Qt_5_13);
+        stream.setByteOrder(QDataStream::BigEndian);
         stream << qint32(0);
         stream << data;
         stream.device()->seek(0);
@@ -98,6 +133,8 @@ public:
     {
         DataPackage data;
         QDataStream in(socket);
+        in.setVersion(QDataStream::Qt_5_13);
+        in.setByteOrder(QDataStream::BigEndian);
         static qint32 bytesToRead = 0;
         qDebug() << "socket->bytesAvailable(): " << socket->bytesAvailable();
         if (socket->bytesAvailable() < sizeof(qint32))
@@ -126,6 +163,28 @@ public:
     }
 };
 
+class CardItem : public QGraphicsPixmapItem
+{
+    Card card;
+public:
+    static QMap<QString, CardItem*> map;
+
+    CardItem(const QChar& _pattern, const int _number ):
+        card(_pattern, _number)
+    {
+        setPixmap(":/cards/" + card.name() + ".png");
+        //setPos(0, -50);
+    }
+
+    CardItem(const Card& _card): card(_card)
+    {
+        setPixmap(":/cards/" + card.name() + ".png");
+        //setPos(0, -50);
+    }
+
+
+
+};
 
 
 #endif // MYTOOLS_H

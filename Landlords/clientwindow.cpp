@@ -15,8 +15,8 @@ ClientWindow::ClientWindow(QWidget *parent) :
     connect(clientSocket,SIGNAL(error(QAbstractSocket::SocketError)),this,
            SLOT(displayError(QAbstractSocket::SocketError)));
     // "new data is available for reading from the device's current read channel"
-    connect(clientSocket, &QTcpSocket::readyRead, this, &ClientWindow::readMessage);
-
+    connect(clientSocket, &QTcpSocket::readyRead, this, &ClientWindow::readyRead);
+    connect(&myTool, &MyTools::transferPackage, this, &ClientWindow::receivePackage);
     ui->pushButton->click();
 }
 
@@ -38,20 +38,28 @@ void ClientWindow::displayError(QAbstractSocket::SocketError) //显示错误
     clientSocket->close();
 }
 
-void ClientWindow::readMessage()
+void ClientWindow::receivePackage(DataPackage data)
 {
-    QDataStream stream(clientSocket);
-    stream.setVersion(QDataStream::Qt_5_13);
-    int id;
-    stream >> id;
-    qDebug() << "Received id: " + QString::number(id);
-    auto play = new PlayWindow(nullptr, id, clientSocket);
-    play->setWindowTitle("Player " + QString::number(id));
+    qDebug() << "Received id: " + QString::number(data.id);
+//    QDataStream stream(clientSocket);
+//    stream.setVersion(QDataStream::Qt_5_13);
+//    int id;
+//    stream >> id;
+//    qDebug() << "Received id: " + QString::number(id);
+    auto play = new PlayWindow(nullptr, data.id, clientSocket);
+    play->setWindowTitle("Player " + QString::number(data.id));
     play->show();
+    disconnect(clientSocket, &QTcpSocket::readyRead, this, &ClientWindow::readyRead);
+    disconnect(&myTool, &MyTools::transferPackage, this, &ClientWindow::receivePackage);
     this->close();
 }
 
 void ClientWindow::clickConnectButton()
 {
     ui->pushButton->click();
+}
+
+void ClientWindow::readyRead()
+{
+    myTool.read(clientSocket);
 }

@@ -24,7 +24,7 @@ signals:
 private slots:
     void acceptConnection();
     void on_pushButton_clicked();
-    void haveMessageToRead(QTcpSocket* socket, const int id);
+    //void readyRead();
     void receivePackage(DataPackage data);
 
 private:

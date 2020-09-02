@@ -17,7 +17,6 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
 
@@ -28,16 +27,15 @@ class Ui_PlayWindow
 public:
     QWidget *centralwidget;
     QGridLayout *gridLayout;
-    QGraphicsView *player1GraphicsView;
     QGraphicsView *player2GraphicsView;
-    QGraphicsView *myCardsGraphicsView;
     QGraphicsView *cardsGraphicsView;
-    QSpacerItem *verticalSpacer_3;
-    QGraphicsView *player0GraphicsView;
+    QGraphicsView *player1GraphicsView;
+    QGraphicsView *myCardsGraphicsView;
     QLabel *noticeLabel;
-    QPushButton *yesPushButton;
-    QPushButton *noPushButton;
     QGraphicsView *bonusCardsGraphicsView;
+    QPushButton *yesPushButton;
+    QGraphicsView *player0GraphicsView;
+    QPushButton *noPushButton;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -50,62 +48,75 @@ public:
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         gridLayout = new QGridLayout(centralwidget);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-        player1GraphicsView = new QGraphicsView(centralwidget);
-        player1GraphicsView->setObjectName(QString::fromUtf8("player1GraphicsView"));
-
-        gridLayout->addWidget(player1GraphicsView, 0, 8, 1, 1);
-
         player2GraphicsView = new QGraphicsView(centralwidget);
         player2GraphicsView->setObjectName(QString::fromUtf8("player2GraphicsView"));
+        QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(2);
+        sizePolicy.setHeightForWidth(player2GraphicsView->sizePolicy().hasHeightForWidth());
+        player2GraphicsView->setSizePolicy(sizePolicy);
 
         gridLayout->addWidget(player2GraphicsView, 0, 1, 1, 1);
 
-        myCardsGraphicsView = new QGraphicsView(centralwidget);
-        myCardsGraphicsView->setObjectName(QString::fromUtf8("myCardsGraphicsView"));
-
-        gridLayout->addWidget(myCardsGraphicsView, 9, 0, 1, 9);
-
         cardsGraphicsView = new QGraphicsView(centralwidget);
         cardsGraphicsView->setObjectName(QString::fromUtf8("cardsGraphicsView"));
+        QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(cardsGraphicsView->sizePolicy().hasHeightForWidth());
+        cardsGraphicsView->setSizePolicy(sizePolicy1);
 
-        gridLayout->addWidget(cardsGraphicsView, 2, 1, 5, 7);
+        gridLayout->addWidget(cardsGraphicsView, 2, 1, 5, 6);
 
-        verticalSpacer_3 = new QSpacerItem(20, 13, QSizePolicy::Minimum, QSizePolicy::Preferred);
+        player1GraphicsView = new QGraphicsView(centralwidget);
+        player1GraphicsView->setObjectName(QString::fromUtf8("player1GraphicsView"));
 
-        gridLayout->addItem(verticalSpacer_3, 8, 1, 1, 1);
+        gridLayout->addWidget(player1GraphicsView, 0, 7, 1, 1);
 
-        player0GraphicsView = new QGraphicsView(centralwidget);
-        player0GraphicsView->setObjectName(QString::fromUtf8("player0GraphicsView"));
+        myCardsGraphicsView = new QGraphicsView(centralwidget);
+        myCardsGraphicsView->setObjectName(QString::fromUtf8("myCardsGraphicsView"));
+        sizePolicy.setHeightForWidth(myCardsGraphicsView->sizePolicy().hasHeightForWidth());
+        myCardsGraphicsView->setSizePolicy(sizePolicy);
 
-        gridLayout->addWidget(player0GraphicsView, 6, 8, 1, 1);
+        gridLayout->addWidget(myCardsGraphicsView, 8, 0, 1, 8);
 
         noticeLabel = new QLabel(centralwidget);
         noticeLabel->setObjectName(QString::fromUtf8("noticeLabel"));
         noticeLabel->setAlignment(Qt::AlignCenter);
 
-        gridLayout->addWidget(noticeLabel, 7, 5, 1, 2);
-
-        yesPushButton = new QPushButton(centralwidget);
-        yesPushButton->setObjectName(QString::fromUtf8("yesPushButton"));
-        QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-        sizePolicy.setHorizontalStretch(0);
-        sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(yesPushButton->sizePolicy().hasHeightForWidth());
-        yesPushButton->setSizePolicy(sizePolicy);
-
-        gridLayout->addWidget(yesPushButton, 7, 8, 1, 1);
-
-        noPushButton = new QPushButton(centralwidget);
-        noPushButton->setObjectName(QString::fromUtf8("noPushButton"));
-        sizePolicy.setHeightForWidth(noPushButton->sizePolicy().hasHeightForWidth());
-        noPushButton->setSizePolicy(sizePolicy);
-
-        gridLayout->addWidget(noPushButton, 7, 1, 1, 1);
+        gridLayout->addWidget(noticeLabel, 7, 4, 1, 2);
 
         bonusCardsGraphicsView = new QGraphicsView(centralwidget);
         bonusCardsGraphicsView->setObjectName(QString::fromUtf8("bonusCardsGraphicsView"));
 
-        gridLayout->addWidget(bonusCardsGraphicsView, 0, 5, 1, 1);
+        gridLayout->addWidget(bonusCardsGraphicsView, 0, 4, 1, 1);
+
+        yesPushButton = new QPushButton(centralwidget);
+        yesPushButton->setObjectName(QString::fromUtf8("yesPushButton"));
+        QSizePolicy sizePolicy2(QSizePolicy::Minimum, QSizePolicy::Preferred);
+        sizePolicy2.setHorizontalStretch(0);
+        sizePolicy2.setVerticalStretch(0);
+        sizePolicy2.setHeightForWidth(yesPushButton->sizePolicy().hasHeightForWidth());
+        yesPushButton->setSizePolicy(sizePolicy2);
+
+        gridLayout->addWidget(yesPushButton, 7, 7, 1, 1);
+
+        player0GraphicsView = new QGraphicsView(centralwidget);
+        player0GraphicsView->setObjectName(QString::fromUtf8("player0GraphicsView"));
+        QSizePolicy sizePolicy3(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        sizePolicy3.setHorizontalStretch(0);
+        sizePolicy3.setVerticalStretch(0);
+        sizePolicy3.setHeightForWidth(player0GraphicsView->sizePolicy().hasHeightForWidth());
+        player0GraphicsView->setSizePolicy(sizePolicy3);
+
+        gridLayout->addWidget(player0GraphicsView, 6, 7, 1, 1);
+
+        noPushButton = new QPushButton(centralwidget);
+        noPushButton->setObjectName(QString::fromUtf8("noPushButton"));
+        sizePolicy2.setHeightForWidth(noPushButton->sizePolicy().hasHeightForWidth());
+        noPushButton->setSizePolicy(sizePolicy2);
+
+        gridLayout->addWidget(noPushButton, 7, 1, 1, 1);
 
         PlayWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(PlayWindow);

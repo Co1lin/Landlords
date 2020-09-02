@@ -31,7 +31,7 @@ void ServerWindow::on_pushButton_clicked()
     connect(serverSocket, &QTcpServer::newConnection, this, &ServerWindow::acceptConnection);
     confirmed = 0;
     auto myself = new ClientWindow();
-    // myself->clickConnectButton();
+    // myself->clickConnectButton();    // need to run after complete debugging!
 }
 
 void ServerWindow::acceptConnection()
@@ -43,26 +43,13 @@ void ServerWindow::acceptConnection()
     {
         qDebug() << "Three players are here!";
         connect(&myTool, &MyTools::transferPackage, this, &ServerWindow::receivePackage);
-        QByteArray data;
-        QDataStream stream(&data, QIODevice::WriteOnly);
-        stream.setVersion(QDataStream::Qt_5_13);
-        int id = 0;
+        DataPackage sendId;
+        sendId.id = 0;
         foreach (auto* socket, sockets)
         {
-            stream << id;
-            socket->write(data);
-            connect(socket, &QTcpSocket::disconnected, [=]
-            {
-                qDebug() << id << " disconnected";
-            });
-            data.clear();
-            // "new data is available for reading from the device's current read channel"
-            connect(socket, &QTcpSocket::readyRead, this, [=]
-            {
-                haveMessageToRead(socket, id);
-            });
-            stream.device()->seek(0);
-            id++;
+            connect(socket, &QTcpSocket::readyRead, this, [=]{ myTool.read(socket); });
+            myTool.send(socket, sendId);
+            sendId.id++;
         }
         qDebug() << "written";
         this->close();
@@ -76,12 +63,41 @@ void ServerWindow::receivePackage(DataPackage data)
     {
         qDebug() << "confirmed: " << ++confirmed << data.id;
         if (confirmed == 6)
+        {
             qDebug() << "all players has been ready!";
+            // deal 17*3 cards
+            QVector<Card> cardVector;
+            QVector<QChar> cardPattern = { 'C', 'D', 'H', 'S' };
+            foreach (auto& pattern, cardPattern)
+            {
+                for (int i = 3; i <= 15; i++)
+                {
+                    Card tmp(pattern, i);
+                    cardVector.push_back(tmp);
+                    CardItem::map[tmp.name()] = new CardItem(tmp);
+                }
+            }
+            Card tmp1('K', 16);
+            cardVector.push_back(tmp1);
+            CardItem::map[tmp1.name()] = new CardItem(tmp1);
+            Card tmp2('K', 17);
+            cardVector.push_back(tmp2);
+            CardItem::map[tmp2.name()] = new CardItem(tmp2);
+            auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+            std::shuffle(cardVector.begin(), cardVector.end(), std::default_random_engine(static_cast<unsigned>(seed)));
+            DataPackage dealCard[3];
+            for (int id = 0; id < 3; id++)
+            {
+                dealCard[id].type = 1;  // deal cards
+                for (int i = 0; i < 17; i++)
+                    dealCard[id].cards.push_back(cardVector[i + 17 * id]);
+                myTool.send(sockets[id], dealCard[id]);
+            }
+        }
     }
-
 }
 
-void ServerWindow::haveMessageToRead(QTcpSocket* socket, const int id)
-{
-    myTool.read(socket);
-}
+//void ServerWindow::readyRead()
+//{
+//    myTool.read(clientSocket);
+//}

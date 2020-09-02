@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QtNetwork>
+#include <mytools.h>
 
 namespace Ui {
 class ClientWindow;
@@ -21,12 +22,14 @@ public:
 private slots:
     void on_pushButton_clicked();
     void displayError(QAbstractSocket::SocketError);
-    void readMessage();
+    void readyRead();
+    void receivePackage(DataPackage data);
 
 private:
     Ui::ClientWindow *ui;
 
     QTcpSocket* clientSocket;
+    MyTools myTool;
 
 };
 
