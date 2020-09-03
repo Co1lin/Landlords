@@ -3,6 +3,7 @@
 
 #include <QtNetwork>
 #include <QGraphicsItem>
+#include <QtMath>
 
 
 class Card
@@ -256,6 +257,70 @@ public:
     void installMyEventFilter(T* _obj)
     {
         _obj->installEventFilter(this);
+    }
+
+    static QMap<int, int> makeMap(const QList<Card>& cards)
+    {
+        QMap<int, int> map;
+        foreach (auto card, cards)
+        {
+            auto iter = map.find(card.number);
+            if (iter == map.end())
+                map[card.number] = 1;
+            else
+                map[card.number]++;
+        }
+        return map;
+    }
+
+    static QPair<int, int> maxSame(const QList<Card>& cards)
+    {
+        // return (cardNumber, maxCount)
+        auto map = makeMap(cards);
+        int number = 0;
+        int result = 0;
+        for (auto iter = map.begin(); iter != map.end(); iter++)
+        {
+            if (result < iter.value())
+            {
+                result = iter.value();
+                number = iter.key();
+            }
+        }
+        return QPair(number, result);
+    }
+
+    static QPair<int, int> hasStraignt(const QList<Card>& cards)
+    {
+        // return (start, end)
+        int start = cards.last().number, end = cards.first().number;
+        int i = 0;
+        for (auto iter = cards.rbegin(); iter != cards.rend(); iter++)
+        {
+            if (iter->number == start + i)
+                i++;
+            else
+                return QPair(-1, -1);
+        }
+        return QPair(start, end);
+    }
+
+    static QPair<int, int> hasStraignt(const QList<int>& cards)
+    {
+        // return (start, end)
+        int start = cards.last(), end = cards.first();
+        int i = 0;
+        for (auto iter = cards.rbegin(); iter != cards.rend(); iter++)
+        {
+            if (*iter == start + i)
+                i++;
+            else
+                return QPair(-1, -1);
+        }
+        if (3 <= start && 14 <= end)
+            return QPair(start, end);
+        else
+            return QPair(-1, -1);
     }
 };
 

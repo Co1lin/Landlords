@@ -132,14 +132,26 @@ void ServerWindow::receivePackage(DataPackage data)
         }
         else
         {
-            cardToBeat = dataToSend.cards = data.cards;
+            cardToBeat = dataToSend.cards = data.cards; // save the cards played
             playerToBeat = data.id;
         }
         dataToSend.playerInfo = playerInfo;
-        myTool.send(sockets[data.id], dataToSend);
-        myTool.send(sockets[MyTools::nextId(data.id + 1)], dataToSend);
-        dataToSend.msg[0] = "your turn";
-        myTool.send(sockets[MyTools::nextId(data.id)], dataToSend);
+        if (data.msg.size() == 1)
+        {
+            myTool.send(sockets[data.id], dataToSend);
+            myTool.send(sockets[MyTools::nextId(data.id + 1)], dataToSend);
+            dataToSend.msg[0] = "your turn";
+            myTool.send(sockets[MyTools::nextId(data.id)], dataToSend);
+        }
+        else
+        {
+            // WIN!
+            dataToSend.msg.clear();
+            dataToSend.msg << "end!" << data.playerInfo[data.id].role;
+            myTool.send(sockets[data.id], dataToSend);
+            myTool.send(sockets[MyTools::nextId(data.id)], dataToSend);
+            myTool.send(sockets[MyTools::nextId(data.id + 1)], dataToSend);
+        }
     }
 }
 

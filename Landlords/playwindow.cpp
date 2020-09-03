@@ -122,6 +122,15 @@ void PlayWindow::receivePackage(DataPackage data)
             ui->noticeLabel->setText("请出牌");
             tmpData = data;
         }
+        else if (data.msg[0] == "end!")
+        {
+            if (data.playerInfo[id].role == data.msg[1])
+                ui->noticeLabel->setText(data.msg[1] + "获胜！" + "    重新开始？");
+            else
+                ui->noticeLabel->setText(data.playerInfo[id].role + "输了(o_ _)ﾉ" + "    重新开始？");
+            enableChoice();
+        }
+
     }
 }
 
@@ -221,7 +230,8 @@ void PlayWindow::on_yesPushButton_clicked()
         dataToSend.msg << "yes";
         myTool.send(playSocket, dataToSend);
     }
-    else if (ui->noticeLabel->text() == "请出牌")
+    else if (ui->noticeLabel->text() == "请出牌" ||
+             ui->noticeLabel->text() == "出牌不符合规则！")
     {
         if (beat(tmpData.cards))
         {
@@ -229,7 +239,7 @@ void PlayWindow::on_yesPushButton_clicked()
             dataToSend.type = 2;
             dataToSend.msg << "play";
             dataToSend.cards = selectedCards;
-            myTool.send(playSocket, dataToSend);
+            qDebug() << "send cards!";
             // delete the cards that the player played
             foreach (auto item, selectedCardItems)
             {
@@ -239,12 +249,20 @@ void PlayWindow::on_yesPushButton_clicked()
             }
             // update the view of my cards
             showCards();
+            if (myCards.empty())    // WIN!!!
+                dataToSend.msg << "WIN!";
+            myTool.send(playSocket, dataToSend);    // send cards!
         }
         else
         {
-            ui->noticeLabel->text() = "出牌不符合规则！";
+            ui->noticeLabel->setText("出牌不符合规则！");
             return;
         }
+    }
+    else if (ui->noticeLabel->text() == "农民" ||
+             ui->noticeLabel->text() == "地主")
+    {
+        // restart
     }
     ui->noticeLabel->setText("等待");
     disableChoice();
@@ -260,13 +278,19 @@ void PlayWindow::on_noPushButton_clicked()
         dataToSend.msg << "no";
         myTool.send(playSocket, dataToSend);
     }
-    else if (ui->noticeLabel->text() == "请出牌")
+    else if (ui->noticeLabel->text() == "请出牌" ||
+             ui->noticeLabel->text() == "出牌不符合规则！")
     {
         // pass
         DataPackage dataToSend(id);
         dataToSend.type = 2;
         dataToSend.msg << "pass";
         myTool.send(playSocket, dataToSend);
+    }
+    else if (ui->noticeLabel->text() == "农民" ||
+             ui->noticeLabel->text() == "地主")
+    {
+        exit(0);
     }
     ui->noticeLabel->setText("等待");
     disableChoice();
@@ -289,12 +313,300 @@ bool PlayWindow::beat(const QList<Card>& _lastCards)
     }
     if (selectedCards.empty())
         return false;
-    else if (_lastCards.size() == 0 || cardItems.size() == 20 + 1)
-        return true;
+    else
+        MyTools::sortCards(selectedCards);
+
+    qDebug() << "judgement!!!!!!!!!!!!!!!!!!!!!!!!";
+    QString selectedCardsType = cardsType(selectedCards);
+    if (myCards.size() == 20 || _lastCards.empty())
+    {
+        if (selectedCardsType != "invalid")
+            return true;
+        else
+            return false;
+    }
     else
     {
-        // judgement
-        qDebug() << "judgement";
-        return true;
+        QString lastCardsType = cardsType(_lastCards);
+        if (selectedCardsType != lastCardsType)
+        {
+            if (selectedCardsType == "double king")
+                return true;
+            else if (selectedCardsType == "bomb" && lastCardsType != "double king")
+                return true;
+            else
+                return false;
+        }
+        else
+        {
+            if (selectedCardsType == "single" ||
+                selectedCardsType == "double")
+                return selectedCards.first() > _lastCards.first();
+            else if (selectedCardsType.mid(1) == "straight" ||
+                     selectedCardsType.mid(1) == "double straight")
+                return selectedCards.last() > _lastCards.last();
+            else if (selectedCardsType.mid(1, 6) == "triple" ||
+                     selectedCardsType.mid(0, 4) == "bomb")
+            {
+                auto same1 = MyTools::maxSame(selectedCards);
+                auto same2 = MyTools::maxSame(_lastCards);
+                return same1.first > same2.first;
+            }
+        }
     }
+}
+
+QString PlayWindow::cardsType(const QList<Card>& cards)
+{
+    /*  null
+     *  invalid
+     *  single
+     *  straight            5straight ...
+     *  double
+     *  double king
+     *  double straight     5double straight ...
+     *  triple * n
+     *      + 0             4triple
+     *      + single * 1    4triple+single  ...
+     *      + double * 1    4triple+double  ...
+     *  bomb
+     *      +single*2       bomb+2single
+     *      +double*2       bomb+2double
+     */
+
+    if (cards.empty())
+        return "null";
+    else if (cards.size() == 1)
+        return "single";
+    else if (cards.size() == 2)
+    {
+        if (cards.first() == cards.last())
+            return "double";
+        else if (cards.first().number == 17 &&
+                 cards.last().number == 16)
+            return "double king";
+        else
+            return "invalid";
+    }
+    else if (cards.size() == 3)
+    {
+        if (cards.first() == cards.last() &&
+            cards.first() == cards.value(1))
+            return "1triple";
+        else
+            return "invalid";
+    }
+    else if (cards.size() == 4)
+    {
+        if (cards.first() == cards.last() &&
+            cards.first() == cards.value(1) &&
+            cards.first() == cards.value(2))
+            return "bomb";
+        else
+        {
+            auto myPair = MyTools::maxSame(cards);
+            if (myPair.second == 3)
+            {
+                return "1triple";
+            }
+            else
+                return "invalid";
+        }
+    }
+    else if (cards.size() == 5)
+    {
+        // 333 + 44 or 34567
+        auto myPair = MyTools::maxSame(cards);
+        if (myPair.second == 3)
+        {
+            QVector<int> others;
+            foreach (auto& card, cards)
+            {
+                if (card.number != myPair.first)
+                    others << card.number;
+            }
+            if (others.first() == others.last())
+                return "1triple+double";
+            else
+                return "invalid";
+        }
+        else if (myPair.second == 1)
+        {
+            myPair = MyTools::hasStraignt(cards);
+            if (myPair.first != -1 && myPair.second - myPair.first + 1 == 5)
+                return "5straight";
+            else
+                return "invalid";
+        }
+        else
+            return "invalid";
+    }
+    else if (cards.size() == 6)
+    {
+        auto myMap = MyTools::makeMap(cards);
+        auto myPair = MyTools::maxSame(cards);
+        if (myPair.second == 4)
+        {
+            return "bomb+2single";
+        }
+        else if (myPair.second == 3)
+        {
+//            QList<Card> others;
+//            foreach (auto& card, cards)
+//            {
+//                if (card.number != myPair.first)
+//                    others << card;
+//            }
+//            auto samePair = MyTools::maxSame(others);
+//            if (samePair.second == 3)
+//                return "2triple";
+//            else
+//                return "invalid";
+            if (myMap.size() == 2)
+                return "2triple";
+            else
+                return "invalid";
+        }
+        else if (myPair.second == 2)
+        {
+            if (myMap.size() == 3)
+            {   // 334455 ?
+                auto straight = MyTools::hasStraignt({ cards.first(), cards.value(2), cards.last() });
+                if (straight.first != -1)
+                    return "3double straight";
+                else
+                    return "invalid";
+            }
+            else
+                return "invalid";
+        }
+        else if (myPair.second == 1)
+        {
+            auto straight = MyTools::hasStraignt(cards);
+            if (straight.first != -1)
+                return "6straight";
+            else
+                return "invalid";
+        }
+        else
+            return "invalid";
+    }
+    else if (cards.size() == 7)
+    {
+        auto myPair = MyTools::maxSame(cards);
+        if (myPair.second == 1)
+        {
+            auto straight = MyTools::hasStraignt(cards);
+            if (straight.first != -1)
+                return "6straight";
+            else
+                return "invalid";
+        }
+        else
+            return "invalid";
+    }
+    else if (cards.size() >= 8)
+    {
+        // 333444 79
+        // 44556677
+        // 333444555
+        // 333444555666777888
+        // 3456789(10)
+        QMap<int, QString> hex;
+        for (int i = 1; i <= 9; i++)
+            hex[i] = QString::number(i);
+        hex[10] = "A";
+        hex[11] = "B";
+        hex[12] = "C";
+        auto straight = MyTools::hasStraignt(cards);
+        if (straight.first != -1)
+        {
+            return hex[cards.size()] + "straight";
+        }
+        else
+        {
+            if (cards.size() % 2 == 0)
+            {
+                QList<Card> list1, list2;
+                int j = 0;
+                for (int i = 0; i < cards.size() - 1; i += 2)
+                {
+                    list1 << cards.value(i);
+                    if (cards.value(i) == cards.value(i + 1))
+                    {
+                        list2 << cards.value(i + 1);
+                        j++;
+                    }
+                    else if (j >= 5)
+                        return "invalid";
+                    else
+                    {
+                        j = -1;
+                        break;
+                    }
+                }
+                if (j >= 4 && list1 == list2)
+                {
+                    return hex[j] + "double straight";
+                }
+            }
+            QVector<QPair<int, int>> same;
+            QList<Card> others = cards;
+            while (others.size())
+            {
+                same << MyTools::maxSame(others);
+                for (auto iter = others.begin(); iter != others.end(); iter++)
+                {
+                    if (iter->number == same.last().first)
+                    {
+                        iter--;
+                        others.erase(iter + 1);
+                    }
+                }
+            }
+            int cc = 0;
+            foreach (auto pair, same)
+            {
+                if (pair.second != 3)
+                    break;
+                else
+                    cc++;
+            }
+            QList<int> tripleStraight;
+            for (int i = 0; i < cc; i++)
+            {
+                tripleStraight << same[i].first;
+            }
+            straight = MyTools::hasStraignt(tripleStraight);
+            if (straight.first != -1)
+            {
+                if (cc == same.size())
+                    return hex[cc] + "triple";
+                else
+                {
+                    int j = 0;
+                    for (auto iter = same.rbegin() + 1; iter != same.rend(); iter++)
+                    {
+                        if (iter->second == 3)
+                            break;
+                        else if (j > cc)
+                            return "invalid";
+                        else
+                        {
+                            if (iter->second != same.last().second)
+                                return "invalid";
+                        }
+                        j++;
+                    }
+                    if (j == cc)
+                        return hex[cc] + "triple";
+                    else
+                        return "!invalid!";
+                }
+            }
+            else
+                return "invalid";
+        }
+    }
+    return "!invalid!";
 }

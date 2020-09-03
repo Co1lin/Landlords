@@ -56,6 +56,7 @@ private:
     void showPlayersInfo(const DataPackage& data, const int _id = -1);
     void showTableCards(const DataPackage& data);
     bool beat(const QList<Card>& _lastCards = {});
+    QString cardsType(const QList<Card>& cards);
 };
 
 #endif // PLAYWINDOW_H
