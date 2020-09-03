@@ -4,4 +4,4 @@ MyTools::MyTools()
 {
 
 }
-QMap<QString, CardItem*> CardItem::map;
+// QMap<QString, CardItem*> CardItem::map;

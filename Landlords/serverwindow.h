@@ -24,7 +24,6 @@ signals:
 private slots:
     void acceptConnection();
     void on_pushButton_clicked();
-    //void readyRead();
     void receivePackage(DataPackage data);
 
 private:
@@ -33,8 +32,13 @@ private:
     QTcpServer* serverSocket;
     QVector<QTcpSocket*> sockets;
     int confirmed;
-    //quint64 bytesToRead;
     MyTools myTool;
+    QVector<Card> cardVector;
+    QVector<PlayerInfo> playerInfo;
+    QList<Card> cardToBeat;
+    int playerToBeat;
+
+    void decideLandlord(DataPackage data);
 };
 
 #endif // SERVERWINDOW_H

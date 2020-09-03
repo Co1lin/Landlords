@@ -46,6 +46,11 @@ public:
         return number > _y.number;
     }
 
+    bool operator==(const Card& _y) const
+    {
+        return number == _y.number;
+    }
+
 //    bool operator==(const Card& _y)
 //    {
 //        return number == _y.number;
@@ -65,6 +70,64 @@ public:
 
 };
 
+class PlayerInfo : public QGraphicsTextItem
+{
+public:
+    int id;
+    int cardsRemain;
+    QString role;
+
+    PlayerInfo()
+    {
+        id = -1;
+        cardsRemain = -1;
+        role = "null";
+    }
+
+    QString content()
+    {
+        return "<p>id: " + QString::number(id) +
+                "</p><p><span style=\"color:#009900;\">cardsRemain: </span>" + QString::number(cardsRemain) +
+                "</p><p><span style=\"color:#E53333;\">role: " + role + "</span></p>";
+    }
+
+    PlayerInfo(const int _id, const int _cardsRemain, const QString& _role):
+        id(_id), cardsRemain(_cardsRemain), role(_role)
+    {
+        setHtml(content());
+    }
+
+    PlayerInfo(const PlayerInfo& _playerInfo)
+    {
+        id = _playerInfo.id;
+        cardsRemain = _playerInfo.cardsRemain;
+        role = _playerInfo.role;
+        setHtml(content());
+    }
+
+    PlayerInfo& operator=(const PlayerInfo& _playerInfo)
+    {
+        id = _playerInfo.id;
+        cardsRemain = _playerInfo.cardsRemain;
+        role = _playerInfo.role;
+        setHtml(content());
+        return *this;
+    }
+
+    friend QDataStream& operator>>(QDataStream& in, PlayerInfo& _data)
+    {
+        in >> _data.id >> _data.cardsRemain >> _data.role;
+        _data.setHtml(_data.content());
+        return in;
+    }
+
+    friend QDataStream& operator<<(QDataStream& out, const PlayerInfo& _data)
+    {
+        out << _data.id << _data.cardsRemain << _data.role;
+        return out;
+    }
+};
+
 
 class DataPackage
 {
@@ -74,30 +137,35 @@ public:
     /* 0:       confirmReady
      * 1:       deal cards
      * 2:       play cards
+     * 3:       decide the landlord
      */
     int id; // -1: server
     QList<Card> cards;
+    QVector<QString> msg;
+    QVector<PlayerInfo> playerInfo;
 
     DataPackage(const int _id = -1): id(_id)
     {
         type = -1;
         cards.clear();
+        for (int i = 0; i <= 2; i++)
+            playerInfo.push_back(PlayerInfo(-1, -1, "null"));
     }
 
     void sortCards(std::function<bool (Card, Card)> cmp = std::greater<Card>())
     {
-        qSort(cards.begin(), cards.end(), cmp);
+        std::sort(cards.begin(), cards.end(), cmp);
     }
 
     friend QDataStream& operator>>(QDataStream& in, DataPackage& _data)
     {
-        in >> _data.type >> _data.id >> _data.cards;
+        in >> _data.type >> _data.id >> _data.cards >> _data.msg >> _data.playerInfo;
         return in;
     }
 
     friend QDataStream& operator<<(QDataStream& out, const DataPackage& _data)
     {
-        out << _data.type << _data.id << _data.cards;
+        out << _data.type << _data.id << _data.cards << _data.msg << _data.playerInfo;
         return out;
     }
 };
@@ -109,8 +177,31 @@ class MyTools : public QObject
 signals:
     void transferPackage(DataPackage data);
 
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override
+    {
+        if (event->type() == QEvent::GraphicsSceneMousePress)
+        {
+            qDebug() << "event filtered";
+            return true;
+        }
+        else
+            return QObject::eventFilter(watched, event);
+    }
+
 public:
     MyTools();
+
+    static int nextId(const int _id)
+    {
+        return (_id + 1) % 3;
+    }
+
+    template <class T>
+    static void sortCards(T& cards, std::function<bool (Card, Card)> cmp = std::greater<Card>())
+    {
+        std::sort(cards.begin(), cards.end(), cmp);
+    }
 
     template <class T>
     void send(QTcpSocket* socket, const T& data)
@@ -127,7 +218,6 @@ public:
         socket->write(bytes);
         qDebug() << "sent one!";
     }
-
 
     void read(QTcpSocket* socket)
     {
@@ -161,30 +251,62 @@ public:
                 break;  // the data is incomplete; read it next time
         }
     }
+
+    template <class T>
+    void installMyEventFilter(T* _obj)
+    {
+        _obj->installEventFilter(this);
+    }
 };
 
 class CardItem : public QGraphicsPixmapItem
 {
     Card card;
+    bool selected;
+
+    void construct()
+    {
+        selected = false;
+        setPixmap(":/cards/" + card.name() + ".png");
+        //this->setAcceptedMouseButtons(Qt::LeftButton);
+        //setFlag(QGraphicsItem::ItemIsSelectable);
+    }
+
+protected:
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override
+    {
+        if (!selected)
+            setPos(pos().x(), pos().y() - 50);
+        else
+            setPos(pos().x(), pos().y() + 50);
+        selected = !selected;
+    }
+
 public:
-    static QMap<QString, CardItem*> map;
 
     CardItem(const QChar& _pattern, const int _number ):
         card(_pattern, _number)
     {
-        setPixmap(":/cards/" + card.name() + ".png");
-        //setPos(0, -50);
+        construct();
     }
 
     CardItem(const Card& _card): card(_card)
     {
-        setPixmap(":/cards/" + card.name() + ".png");
-        //setPos(0, -50);
+        construct();
     }
 
+    bool isSelected()
+    {
+        return this->selected;
+    }
 
-
+    Card getCard() const
+    {
+        return card;
+    }
 };
+
+
 
 
 #endif // MYTOOLS_H

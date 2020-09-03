@@ -20,17 +20,17 @@
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
-        <verstretch>2</verstretch>
+        <verstretch>3</verstretch>
        </sizepolicy>
       </property>
      </widget>
     </item>
     <item row="2" column="1" rowspan="5" colspan="6">
-     <widget class="QGraphicsView" name="cardsGraphicsView">
+     <widget class="QGraphicsView" name="tableGraphicsView">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
+        <verstretch>1</verstretch>
        </sizepolicy>
       </property>
      </widget>
@@ -43,7 +43,7 @@
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
-        <verstretch>2</verstretch>
+        <verstretch>6</verstretch>
        </sizepolicy>
       </property>
      </widget>
@@ -59,7 +59,14 @@
      </widget>
     </item>
     <item row="0" column="4">
-     <widget class="QGraphicsView" name="bonusCardsGraphicsView"/>
+     <widget class="QGraphicsView" name="bottomCardsGraphicsView">
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="interactive">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
     <item row="7" column="7">
      <widget class="QPushButton" name="yesPushButton">
@@ -74,16 +81,6 @@
       </property>
      </widget>
     </item>
-    <item row="6" column="7">
-     <widget class="QGraphicsView" name="player0GraphicsView">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-     </widget>
-    </item>
     <item row="7" column="1">
      <widget class="QPushButton" name="noPushButton">
       <property name="sizePolicy">
@@ -94,6 +91,16 @@
       </property>
       <property name="text">
        <string>No</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="7" rowspan="3">
+     <widget class="QGraphicsView" name="player0GraphicsView">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
      </widget>
     </item>
