@@ -227,21 +227,21 @@ public:
         in.setVersion(QDataStream::Qt_5_13);
         in.setByteOrder(QDataStream::BigEndian);
         static qint32 bytesToRead = 0;
-        qDebug() << "socket->bytesAvailable(): " << socket->bytesAvailable();
+        //qDebug() << "socket->bytesAvailable(): " << socket->bytesAvailable();
         if (socket->bytesAvailable() < sizeof(qint32))
             return; // the head info of size is incomplete
         while (socket->bytesAvailable())
         {
             if (socket->bytesAvailable() >= sizeof(qint32) && bytesToRead == 0)
                 in >> bytesToRead;  // read the size of following data
-            qDebug() << "socket->bytesAvailable(): " << socket->bytesAvailable();
+            //qDebug() << "socket->bytesAvailable(): " << socket->bytesAvailable();
             if (socket->bytesAvailable() >= bytesToRead)
             {
                 // read data
-                qDebug() << "start reading data...";
+                //qDebug() << "start reading data...";
                 char* temp = new char[bytesToRead + 1]{ 0 };
                 in.readRawData(temp, bytesToRead);
-                qDebug() << "socket->bytesAvailable(): " << socket->bytesAvailable();
+                //qDebug() << "socket->bytesAvailable(): " << socket->bytesAvailable();
                 QByteArray buffer(temp, bytesToRead);
                 QDataStream stream(&buffer, QIODevice::ReadWrite);
                 stream >> data;
@@ -290,9 +290,10 @@ public:
         return QPair(number, result);
     }
 
-    static QPair<int, int> hasStraignt(const QList<Card>& cards)
+    static QPair<int, int> hasStraignt(QList<Card> cards)
     {
         // return (start, end)
+        sortCards(cards);
         int start = cards.last().number, end = cards.first().number;
         int i = 0;
         for (auto iter = cards.rbegin(); iter != cards.rend(); iter++)
@@ -302,12 +303,15 @@ public:
             else
                 return QPair(-1, -1);
         }
+        if (3 <= start && end <= 14)
+            return QPair(start, end);
         return QPair(start, end);
     }
 
-    static QPair<int, int> hasStraignt(const QList<int>& cards)
+    static QPair<int, int> hasStraignt(QList<int> cards)
     {
         // return (start, end)
+        std::sort(cards.begin(), cards.end(), std::greater<int>());
         int start = cards.last(), end = cards.first();
         int i = 0;
         for (auto iter = cards.rbegin(); iter != cards.rend(); iter++)
@@ -317,7 +321,7 @@ public:
             else
                 return QPair(-1, -1);
         }
-        if (3 <= start && 14 <= end)
+        if (3 <= start && end <= 14)
             return QPair(start, end);
         else
             return QPair(-1, -1);

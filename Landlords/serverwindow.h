@@ -31,7 +31,7 @@ private:
 
     QTcpServer* serverSocket;
     QVector<QTcpSocket*> sockets;
-    int confirmed;
+    //int confirmed;
     MyTools myTool;
     QVector<Card> cardVector;
     QVector<PlayerInfo> playerInfo;

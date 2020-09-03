@@ -41,10 +41,7 @@ PlayWindow::PlayWindow(QWidget *parent, const int _id, QTcpSocket* _socket) :
     myTool.send(playSocket, confirmReady);
     // sticky package test
     myTool.send(playSocket, confirmReady);
-    connect(playSocket, &QTcpSocket::readyRead, this, [=]
-    {
-        myTool.read(playSocket);
-    });
+    connect(playSocket, &QTcpSocket::readyRead, this, &PlayWindow::readyRead);
     connect(&myTool, &MyTools::transferPackage, this, &PlayWindow::receivePackage);
 }
 
@@ -112,6 +109,14 @@ void PlayWindow::receivePackage(DataPackage data)
     {
         showPlayersInfo(data);
         showTableCards(data);
+        if (data.msg.size() == 2 && data.msg.last() == "passed")
+        {
+            auto passed = new QGraphicsTextItem();
+            passed->setFont(QFont("黑体", 30));
+            passed->setHtml("<p>上一玩家不出</p>");
+            tableGraphicsScene.addItem(passed);
+            passed->setPos(tableGraphicsScene.sceneRect().width() / 2, 0);
+        }
         if (data.msg[0] == "wait")
         {
             // nothing
@@ -119,6 +124,8 @@ void PlayWindow::receivePackage(DataPackage data)
         else if (data.msg[0] == "your turn")
         {
             enableChoice();
+            if (data.cards.empty())
+                ui->noPushButton->setEnabled(false);
             ui->noticeLabel->setText("请出牌");
             tmpData = data;
         }
@@ -171,12 +178,16 @@ void PlayWindow::showPlayersInfo(const DataPackage& data, const int _id)
 void PlayWindow::showTableCards(const DataPackage &data)
 {
     tableGraphicsScene.clear();
+    auto tableBlock = new QGraphicsRectItem(0, 0, 100, 50);
+    tableGraphicsScene.addItem(tableBlock);
+    tableBlock->setPen(QPen(Qt::transparent));
+    tableBlock->setPos(0, 0);
     int i = 0;
     foreach (auto card, data.cards)
     {
         auto cardItem = new CardItem(card);
         tableGraphicsScene.addItem(cardItem);
-        cardItem->setPos(i * 100, 0);
+        cardItem->setPos(i * 100, 55);
         i++;
     }
 }
@@ -191,7 +202,7 @@ void PlayWindow::fitView()
     ui->bottomCardsGraphicsView->fitInView(bottomCardsGraphicsScene.sceneRect(), Qt::KeepAspectRatio);
 
     rect = tableGraphicsScene.sceneRect();
-    delta = rect.height() / 5;
+    delta = rect.height() / 8;
     rect.setHeight(rect.height() + delta);
     ui->tableGraphicsView->fitInView(rect, Qt::KeepAspectRatio);
 
@@ -204,7 +215,7 @@ void PlayWindow::addBlock()
 {
     block = new QGraphicsRectItem(0, 0, 17 * 60, 50);
     myCardsGraphicsScene.addItem(block);
-    block->setPen(QPen(Qt::yellow));
+    block->setPen(QPen(Qt::transparent));
     block->setPos(0, 0);
 }
 
@@ -259,10 +270,17 @@ void PlayWindow::on_yesPushButton_clicked()
             return;
         }
     }
-    else if (ui->noticeLabel->text() == "农民" ||
-             ui->noticeLabel->text() == "地主")
+    else if (ui->noticeLabel->text().mid(0, 2) == "农民" ||
+             ui->noticeLabel->text().mid(0, 2) == "地主")
     {
         // restart
+        disconnect(&fitTimer, &QTimer::timeout, this, &PlayWindow::fitView);
+        disconnect(playSocket, &QTcpSocket::readyRead, this, &PlayWindow::readyRead);
+        disconnect(&myTool, &MyTools::transferPackage, this, &PlayWindow::receivePackage);
+        auto play = new PlayWindow(nullptr, id, playSocket);
+        play->setWindowTitle("Player " + QString::number(id));
+        play->show();
+        this->close();
     }
     ui->noticeLabel->setText("等待");
     disableChoice();
@@ -318,9 +336,10 @@ bool PlayWindow::beat(const QList<Card>& _lastCards)
 
     qDebug() << "judgement!!!!!!!!!!!!!!!!!!!!!!!!";
     QString selectedCardsType = cardsType(selectedCards);
+    qDebug() << selectedCardsType;
     if (myCards.size() == 20 || _lastCards.empty())
     {
-        if (selectedCardsType != "invalid")
+        if (selectedCardsType != "invalid" && selectedCardsType != "!invalid!")
             return true;
         else
             return false;
@@ -451,19 +470,17 @@ QString PlayWindow::cardsType(const QList<Card>& cards)
         }
         else if (myPair.second == 3)
         {
-//            QList<Card> others;
-//            foreach (auto& card, cards)
-//            {
-//                if (card.number != myPair.first)
-//                    others << card;
-//            }
-//            auto samePair = MyTools::maxSame(others);
-//            if (samePair.second == 3)
-//                return "2triple";
-//            else
-//                return "invalid";
             if (myMap.size() == 2)
-                return "2triple";
+            {
+                QList<int> tripleStraight;
+                for (auto iter = myMap.begin(); iter != myMap.end(); iter++)
+                    tripleStraight << iter.key();
+                auto straight = MyTools::hasStraignt(tripleStraight);
+                if (straight.first != -1)
+                    return "2triple";
+                else
+                    return "invalid";
+            }
             else
                 return "invalid";
         }
@@ -512,6 +529,7 @@ QString PlayWindow::cardsType(const QList<Card>& cards)
         // 333444555
         // 333444555666777888
         // 3456789(10)
+        // 4444 55 77
         QMap<int, QString> hex;
         for (int i = 1; i <= 9; i++)
             hex[i] = QString::number(i);
@@ -525,7 +543,20 @@ QString PlayWindow::cardsType(const QList<Card>& cards)
         }
         else
         {
-            if (cards.size() % 2 == 0)
+            QVector<QPair<int, int>> same;
+            QList<Card> others = cards;
+            while (others.size())
+            {
+                same << MyTools::maxSame(others);
+                for (auto iter = others.begin(); iter != others.end(); )
+                {
+                    if (iter->number == same.last().first)
+                        iter = others.erase(iter);
+                    else
+                        iter++;
+                }
+            }
+            if (cards.size() % 2 == 0 && same.first().second == 2)
             {
                 QList<Card> list1, list2;
                 int j = 0;
@@ -545,68 +576,86 @@ QString PlayWindow::cardsType(const QList<Card>& cards)
                         break;
                     }
                 }
-                if (j >= 4 && list1 == list2)
+                straight = MyTools::hasStraignt(list1);
+                if (j >= 4 && straight.first != -1 && list1 == list2)
                 {
                     return hex[j] + "double straight";
                 }
             }
-            QVector<QPair<int, int>> same;
-            QList<Card> others = cards;
-            while (others.size())
+//            QVector<QPair<int, int>> same;
+//            QList<Card> others = cards;
+//            while (others.size())
+//            {
+//                same << MyTools::maxSame(others);
+//                for (auto iter = others.begin(); iter != others.end(); )
+//                {
+//                    if (iter->number == same.last().first)
+//                        iter = others.erase(iter);
+//                    else
+//                        iter++;
+//                }
+//            }
+            else if (cards.size() == 8 && same.first().second == 4 && same.size() == 3)
             {
-                same << MyTools::maxSame(others);
-                for (auto iter = others.begin(); iter != others.end(); iter++)
+                if (same.last().second == 2 && same.value(1).second == 2)
+                    return "bomb+2double";
+                else
+                    return "invalid";
+            }
+            else if (same.first().second == 3)
+            {
+                int cc = 0;
+                foreach (auto pair, same)
                 {
-                    if (iter->number == same.last().first)
-                    {
-                        iter--;
-                        others.erase(iter + 1);
-                    }
+                    if (pair.second != 3)
+                        break;
+                    else
+                        cc++;
                 }
-            }
-            int cc = 0;
-            foreach (auto pair, same)
-            {
-                if (pair.second != 3)
-                    break;
-                else
-                    cc++;
-            }
-            QList<int> tripleStraight;
-            for (int i = 0; i < cc; i++)
-            {
-                tripleStraight << same[i].first;
-            }
-            straight = MyTools::hasStraignt(tripleStraight);
-            if (straight.first != -1)
-            {
-                if (cc == same.size())
-                    return hex[cc] + "triple";
-                else
+                if (cc == 0)
+                    return "invalid";
+                QList<int> tripleStraight;
+                for (int i = 0; i < cc; i++)
                 {
-                    int j = 0;
-                    for (auto iter = same.rbegin() + 1; iter != same.rend(); iter++)
-                    {
-                        if (iter->second == 3)
-                            break;
-                        else if (j > cc)
-                            return "invalid";
-                        else
-                        {
-                            if (iter->second != same.last().second)
-                                return "invalid";
-                        }
-                        j++;
-                    }
-                    if (j == cc)
+                    tripleStraight << same[i].first;
+                }
+                straight = MyTools::hasStraignt(tripleStraight);
+                if (straight.first != -1)
+                {
+                    if (cc == same.size())
                         return hex[cc] + "triple";
                     else
-                        return "!invalid!";
+                    {
+                        int j = 1;
+                        for (auto iter = same.rbegin() + 1; iter != same.rend(); iter++)
+                        {
+                            if (iter->second == 3)
+                                break;
+                            else if (j > cc)
+                                return "invalid";
+                            else
+                            {
+                                if (iter->second != same.last().second)
+                                    return "invalid";
+                                else
+                                    j++;
+                            }
+                        }
+                        if (j == cc)
+                            return hex[cc] + "triple";
+                        else
+                            return "!invalid!";
+                    }
                 }
+                else
+                    return "invalid";
             }
-            else
-                return "invalid";
         }
     }
     return "!invalid!";
+}
+
+void PlayWindow::readyRead()
+{
+    myTool.read(playSocket);
 }

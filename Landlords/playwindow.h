@@ -22,6 +22,7 @@ public:
     ~PlayWindow();
 
 private slots:
+    void readyRead();
     void receivePackage(DataPackage data);
     void showCards();
     void fitView();

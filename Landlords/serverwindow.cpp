@@ -29,7 +29,7 @@ void ServerWindow::on_pushButton_clicked()
         return;
     }
     connect(serverSocket, &QTcpServer::newConnection, this, &ServerWindow::acceptConnection);
-    confirmed = 0;
+    // confirmed = 0;
     auto myself = new ClientWindow();
     // myself->clickConnectButton();    // need to run after complete debugging!
 }
@@ -62,25 +62,33 @@ void ServerWindow::receivePackage(DataPackage data)
     static int receivedMsg = 0;
     if (data.type == 0)
     {
-        qDebug() << "confirmed: " << ++confirmed << data.id;
-        if (confirmed == 6)
+        qDebug() << "confirmed: " << ++receivedMsg << data.id;
+        if (receivedMsg == 6)
         {
+            receivedMsg = 0;
             qDebug() << "all players has been ready!";
+            // clear
+            playerInfo.clear();
+            cardToBeat.clear();
+            playerToBeat = -1;
             // deal 17*3 cards
             // QVector<Card> cardVector;
-            QVector<QChar> cardPattern = { 'C', 'D', 'H', 'S' };
-            foreach (auto& pattern, cardPattern)
+            if (cardVector.empty())
             {
-                for (int i = 3; i <= 15; i++)
+                QVector<QChar> cardPattern = { 'C', 'D', 'H', 'S' };
+                foreach (auto& pattern, cardPattern)
                 {
-                    Card tmp(pattern, i);
-                    cardVector.push_back(tmp);
+                    for (int i = 3; i <= 15; i++)
+                    {
+                        Card tmp(pattern, i);
+                        cardVector.push_back(tmp);
+                    }
                 }
+                Card tmp1('K', 16);
+                cardVector.push_back(tmp1);
+                Card tmp2('K', 17);
+                cardVector.push_back(tmp2);
             }
-            Card tmp1('K', 16);
-            cardVector.push_back(tmp1);
-            Card tmp2('K', 17);
-            cardVector.push_back(tmp2);
             auto seed = std::chrono::system_clock::now().time_since_epoch().count();
             std::shuffle(cardVector.begin(), cardVector.end(), std::default_random_engine(static_cast<unsigned>(seed)));
             for (int id = 0; id < 3; id++)
@@ -104,6 +112,7 @@ void ServerWindow::receivePackage(DataPackage data)
         receivedMsg++;
         if (receivedMsg == 3)
         {
+            receivedMsg = 0;
             // decide the landlord
             qDebug() << "start to decide the landlord";
             int randomPlayer = QRandomGenerator::global()->bounded(3);
@@ -111,7 +120,6 @@ void ServerWindow::receivePackage(DataPackage data)
             dataToSend.type = 3;
             dataToSend.msg << "landlord?";
             myTool.send(sockets[randomPlayer], dataToSend);
-            receivedMsg = 0;
         }
     }
     else if (data.type == 3)
@@ -127,6 +135,7 @@ void ServerWindow::receivePackage(DataPackage data)
         if (data.msg[0] == "pass")
         {
             dataToSend.cards = cardToBeat;
+            dataToSend.msg << "passed";
             if (MyTools::nextId(data.id) == playerToBeat)
                 cardToBeat = dataToSend.cards = {};
         }
@@ -147,10 +156,9 @@ void ServerWindow::receivePackage(DataPackage data)
         {
             // WIN!
             dataToSend.msg.clear();
-            dataToSend.msg << "end!" << data.playerInfo[data.id].role;
-            myTool.send(sockets[data.id], dataToSend);
-            myTool.send(sockets[MyTools::nextId(data.id)], dataToSend);
-            myTool.send(sockets[MyTools::nextId(data.id + 1)], dataToSend);
+            dataToSend.msg << "end!" << playerInfo[data.id].role;
+            for (int id = 0; id <= 2; id++)
+                myTool.send(sockets[id], dataToSend);
         }
     }
 }
@@ -222,6 +230,9 @@ void ServerWindow::decideLandlord(DataPackage data)
         decision.playerInfo = playerInfo;
         for (int id = 0; id < 3; id++)
             myTool.send(sockets[id], decision);
+
+        landlord = -1;
+        phase.clear();
     }
 }
 
