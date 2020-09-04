@@ -33,7 +33,7 @@ void ServerWindow::on_pushButton_clicked()
     {
         if (!serverSocket->listen(QHostAddress::Any, static_cast<quint16>(ui->portSpinBox->value())))
         {
-            qDebug() << serverSocket->errorString();
+            qDebug() << "error when listen port: " << serverSocket->errorString();
             continue;
         }
         connect(serverSocket, &QTcpServer::newConnection, this, &ServerWindow::acceptConnection);
@@ -67,7 +67,8 @@ void ServerWindow::acceptConnection()
         qDebug() << "written";
         myself->move(this->pos());
         myself->resize(this->size());
-        this->close();
+        this->hide();
+        //this->close();
     }
 }
 
@@ -148,7 +149,7 @@ void ServerWindow::receivePackage(DataPackage data)
         if (data.msg[0] == "pass")
         {
             dataToSend.cards = cardToBeat;
-            dataToSend.msg << "passed";
+            dataToSend.msg << "passed" << QString::number(data.id);
             if (MyTools::nextId(data.id) == playerToBeat)
                 cardToBeat = dataToSend.cards = {};
         }

@@ -127,17 +127,18 @@ void PlayWindow::receivePackage(DataPackage data)
     }
     else if (data.type == 2)    // playing game
     {
-        showPlayersInfo(data);
-        showTableCards(data);
-        tmpData = data;
-        if (data.msg.size() == 2 && data.msg.last() == "passed")
+        if (data.msg.size() == 3 && data.msg[1] == "passed")
         {
             auto passed = new QGraphicsTextItem();
             passed->setFont(QFont(QStringLiteral("黑体"), 30));
             passed->setHtml(QStringLiteral("<p>上一玩家不出</p>"));
             tableGraphicsScene.addItem(passed);
             passed->setPos(tableGraphicsScene.sceneRect().width() / 2, 0);
+            data.playerInfo[data.msg.last().toInt()].setAddition(QStringLiteral("不出"));
         }
+        showTableCards(data);
+        showPlayersInfo(data);
+        tmpData = data;
         if (data.msg[0] == "wait")
         {
             // nothing
@@ -400,6 +401,7 @@ bool PlayWindow::beat(const QList<Card>& _lastCards)
                 return same1.first > same2.first;
             }
         }
+        return false;   // don't have to
     }
 }
 
@@ -610,19 +612,6 @@ QString PlayWindow::cardsType(const QList<Card>& cards)
                     return hex[j] + "double straight";
                 }
             }
-//            QVector<QPair<int, int>> same;
-//            QList<Card> others = cards;
-//            while (others.size())
-//            {
-//                same << MyTools::maxSame(others);
-//                for (auto iter = others.begin(); iter != others.end(); )
-//                {
-//                    if (iter->number == same.last().first)
-//                        iter = others.erase(iter);
-//                    else
-//                        iter++;
-//                }
-//            }
             else if (cards.size() == 8 && same.first().second == 4 && same.size() == 3)
             {
                 if (same.last().second == 2 && same.value(1).second == 2)

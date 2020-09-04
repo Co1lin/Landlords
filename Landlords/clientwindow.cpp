@@ -29,8 +29,8 @@ ClientWindow::~ClientWindow()
 void ClientWindow::on_pushButton_clicked()
 {
     clientSocket->close();
-    clientSocket->connectToHost(ui->hostLineEdit->text(), ui->portSpinBox->text().toInt());
-    //clientSocket->connectToHost(ui->hostLineEdit->text(), ui->portSpinBox->text().toInt(), QIODevice::ReadWrite, QAbstractSocket::IPv6Protocol);
+    clientSocket->connectToHost(ui->hostLineEdit->text(), static_cast<quint16>(ui->portSpinBox->text().toInt()));
+    //clientSocket->connectToHost(ui->hostLineEdit->text(), ui->portSpinBox->text().toInt(), QIODevice::ReadWrite, QAbstractSocket::IPv4Protocol);
     qDebug() << "Client connects to " << ui->hostLineEdit->text() << ": " << ui->portSpinBox->text().toInt();
     ui->pushButton->setEnabled(false);
 }

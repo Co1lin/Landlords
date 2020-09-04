@@ -73,6 +73,7 @@ public:
     int cardsRemain;
     QString role;
     QString note;
+    QString addition;
 
     PlayerInfo()
     {
@@ -85,7 +86,8 @@ public:
     {
         return QStringLiteral("<p><span style=\"color:#FFC0CB;\">玩家ID：") + QString::number(id) + " " + note + "</span>" +
                 QStringLiteral("<br><span style=\"color:#FFFF00;\">剩余牌数： ") + QString::number(cardsRemain) + "</span>" +
-                QStringLiteral("<br><span style=\"color:#E53333;\">角色： ") + role + "</span></p>";
+                QStringLiteral("<br><span style=\"color:#E53333;\">角色： ") + role + "</span>" +
+                QStringLiteral("<br><span style=\"color:#FF00CC;\">") + addition + "</span></p>";
     }
 
     PlayerInfo(const int _id, const int _cardsRemain, const QString& _role):
@@ -99,6 +101,8 @@ public:
         id = _playerInfo.id;
         cardsRemain = _playerInfo.cardsRemain;
         role = _playerInfo.role;
+        note = _playerInfo.note;
+        addition = _playerInfo.addition;
         setHtml(content());
     }
 
@@ -108,25 +112,33 @@ public:
         setHtml(content());
     }
 
+    void setAddition(const QString& _addtion)
+    {
+        addition = _addtion;
+        setHtml(content());
+    }
+
     PlayerInfo& operator=(const PlayerInfo& _playerInfo)
     {
         id = _playerInfo.id;
         cardsRemain = _playerInfo.cardsRemain;
         role = _playerInfo.role;
+        note = _playerInfo.note;
+        addition = _playerInfo.addition;
         setHtml(content());
         return *this;
     }
 
     friend QDataStream& operator>>(QDataStream& in, PlayerInfo& _data)
     {
-        in >> _data.id >> _data.cardsRemain >> _data.role;
+        in >> _data.id >> _data.cardsRemain >> _data.role >> _data.note >> _data.addition;
         _data.setHtml(_data.content());
         return in;
     }
 
     friend QDataStream& operator<<(QDataStream& out, const PlayerInfo& _data)
     {
-        out << _data.id << _data.cardsRemain << _data.role;
+        out << _data.id << _data.cardsRemain << _data.role << _data.note << _data.addition;
         return out;
     }
 };
@@ -243,7 +255,7 @@ public:
         stream << data;
         stream.device()->seek(0);
         // qDebug() << bytes.size() - sizeof(qint32);
-        stream << qint32(bytes.size() - sizeof(qint32));
+        stream << qint32(static_cast<qint32>(bytes.size()) - static_cast<qint32>(sizeof(qint32)));
         socket->write(bytes);
         qDebug() << "sent one!";
     }
@@ -256,18 +268,18 @@ public:
         in.setByteOrder(QDataStream::BigEndian);
         static qint32 bytesToRead = 0;
         //qDebug() << "socket->bytesAvailable(): " << socket->bytesAvailable();
-        if (socket->bytesAvailable() < sizeof(qint32))
+        if (static_cast<qint32>(socket->bytesAvailable()) < static_cast<qint32>(sizeof(qint32)))
             return; // the head info of size is incomplete
         while (socket->bytesAvailable())
         {
-            if (socket->bytesAvailable() >= sizeof(qint32) && bytesToRead == 0)
+            if (static_cast<qint32>(socket->bytesAvailable()) >= static_cast<qint32>(sizeof(qint32)) && bytesToRead == 0)
                 in >> bytesToRead;  // read the size of following data
             //qDebug() << "socket->bytesAvailable(): " << socket->bytesAvailable();
             if (socket->bytesAvailable() >= bytesToRead)
             {
                 // read data
                 //qDebug() << "start reading data...";
-                char* temp = new char[bytesToRead + 1]{ 0 };
+                char* temp = new char[static_cast<unsigned long>(bytesToRead + 1)]{ 0 };
                 in.readRawData(temp, bytesToRead);
                 //qDebug() << "socket->bytesAvailable(): " << socket->bytesAvailable();
                 QByteArray buffer(temp, bytesToRead);
@@ -370,7 +382,7 @@ class CardItem : public QGraphicsPixmapItem
     }
 
 protected:
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent*) override
     {
         if (!selected)
             setPos(pos().x(), pos().y() - 50);

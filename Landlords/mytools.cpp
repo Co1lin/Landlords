@@ -4,4 +4,3 @@ MyTools::MyTools()
 {
 
 }
-// QMap<QString, CardItem*> CardItem::map;
