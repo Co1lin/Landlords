@@ -1,0 +1,40 @@
+## mac 操作系统配置演示,如下配置 git 就会忽略下面配置的文件,例如系统文件 .DS_Store
+
+# Created by https://www.gitignore.io/api/macos
+# Edit at https://www.gitignore.io/?templates=macos
+
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Directories of building
+build-Landlords-Desktop_Qt_5_13_1_clang_64bit-Debug
+build-Landlords-Desktop_Qt_5_13_1_clang_64bit-Release
+
+.qmake.stash
+
+# End of https://www.gitignore.io/api/macos
