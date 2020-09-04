@@ -1,6 +1,10 @@
 # Landlords
 
+[![GitHub license](https://img.shields.io/github/license/Co1lin/landlords?style=flat-square)](https://github.com/Co1lin/landlords/blob/master/LICENSE)  [![Qt](https://img.shields.io/badge/Qt-5-brightgreen?style=flat-square)](https://www.qt.io/)  [![C++](https://img.shields.io/badge/C%2B%2B-11-brightgreen?style=flat-square)](https://en.cppreference.com)  [![CodeFactor](https://www.codefactor.io/repository/github/co1lin/landlords/badge)](https://www.codefactor.io/repository/github/co1lin/landlords)  [![GitHub stars](https://img.shields.io/github/stars/Co1lin/landlords?style=flat-square)](https://github.com/Co1lin/landlords/stargazers)  [![GitHub forks](https://img.shields.io/github/forks/Co1lin/landlords?style=flat-square)](https://github.com/Co1lin/landlords/network)  
+
 The classic Chinese card game Landlords. An assignment for Qt network programming, in summer term 2020.  
+
+![preview](https://github.com/Co1lin/Landlords/blob/master/others/preview.png)  
 
 ## 工作流程
 
