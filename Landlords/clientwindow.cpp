@@ -8,6 +8,7 @@ ClientWindow::ClientWindow(QWidget *parent) :
     ui(new Ui::ClientWindow)
 {
     ui->setupUi(this);
+    setWindowTitle(QStringLiteral("Landlord - 斗地主 - 连接页面"));
     ui->infoLabel->setText(MyTools::getLocalIPString());
     clientSocket = new QTcpSocket();
     // connected with the server

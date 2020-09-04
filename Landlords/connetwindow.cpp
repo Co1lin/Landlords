@@ -9,6 +9,7 @@ ConnetWindow::ConnetWindow(QWidget *parent) :
     ui(new Ui::ConnetWindow)
 {
     ui->setupUi(this);
+    setWindowTitle(QStringLiteral("Landlord - 斗地主 - 连接页面"));
 }
 
 ConnetWindow::~ConnetWindow()

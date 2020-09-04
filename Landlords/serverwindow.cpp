@@ -10,7 +10,7 @@ ServerWindow::ServerWindow(QWidget *parent) :
     ui(new Ui::ServerWindow)
 {
     ui->setupUi(this);
-
+    setWindowTitle(QStringLiteral("Landlord - 斗地主 - 连接页面"));
     serverSocket = new QTcpServer();
     // ui->pushButton->click();
     // show local IP info
