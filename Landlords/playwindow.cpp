@@ -18,6 +18,12 @@ PlayWindow::PlayWindow(QWidget *parent, const int _id, QTcpSocket* _socket) :
     ui->noPushButton->setEnabled(false);
     myTool.installMyEventFilter(&bottomCardsGraphicsScene);
     myTool.installMyEventFilter(&tableGraphicsScene);
+    ui->myCardsGraphicsView->setStyleSheet("background: transparent");
+    ui->bottomCardsGraphicsView->setStyleSheet("background: transparent");
+    ui->tableGraphicsView->setStyleSheet("background: transparent");
+    ui->player0GraphicsView->setStyleSheet("background: transparent");
+    ui->player1GraphicsView->setStyleSheet("background: transparent");
+    ui->player2GraphicsView->setStyleSheet("background: transparent");
     ui->myCardsGraphicsView->setScene(&myCardsGraphicsScene);
     ui->bottomCardsGraphicsView->setScene(&bottomCardsGraphicsScene);
     ui->tableGraphicsView->setScene(&tableGraphicsScene);
@@ -164,14 +170,18 @@ void PlayWindow::showPlayersInfo(const DataPackage& data, const int _id)
         {
             playersInfoScene[i]->clear();
             auto playerInfo = new PlayerInfo(data.playerInfo[i]);
+            if (i == id)
+                playerInfo->note = "(Me)";
             playersInfoScene[i]->addItem(playerInfo);
         }
     }
     else
     {
-        playersInfoScene[id]->clear();
-        auto playerInfo = new PlayerInfo(data.playerInfo[id]);
-        playersInfoScene[id]->addItem(playerInfo);
+        playersInfoScene[_id]->clear();
+        auto playerInfo = new PlayerInfo(data.playerInfo[_id]);
+        if (_id == id)
+            playerInfo->note = "(Me)";
+        playersInfoScene[_id]->addItem(playerInfo);
     }
 }
 
@@ -279,6 +289,8 @@ void PlayWindow::on_yesPushButton_clicked()
         disconnect(&myTool, &MyTools::transferPackage, this, &PlayWindow::receivePackage);
         auto play = new PlayWindow(nullptr, id, playSocket);
         play->setWindowTitle("Player " + QString::number(id));
+        play->move(this->pos());
+        play->resize(this->size());
         play->show();
         this->close();
     }

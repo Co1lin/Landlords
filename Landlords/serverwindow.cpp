@@ -12,7 +12,8 @@ ServerWindow::ServerWindow(QWidget *parent) :
     ui->setupUi(this);
 
     serverSocket = new QTcpServer();
-    ui->pushButton->click();
+    //ui->pushButton->click();
+
 }
 
 ServerWindow::~ServerWindow()
@@ -30,8 +31,9 @@ void ServerWindow::on_pushButton_clicked()
     }
     connect(serverSocket, &QTcpServer::newConnection, this, &ServerWindow::acceptConnection);
     // confirmed = 0;
-    auto myself = new ClientWindow();
-    // myself->clickConnectButton();    // need to run after complete debugging!
+    myself = new ClientWindow();
+    myself->clickConnectButton();    // need to run after complete debugging!
+    ui->pushButton->setEnabled(false);
 }
 
 void ServerWindow::acceptConnection()
@@ -52,6 +54,8 @@ void ServerWindow::acceptConnection()
             sendId.id++;
         }
         qDebug() << "written";
+        myself->move(this->pos());
+        myself->resize(this->size());
         this->close();
     }
 }
@@ -97,8 +101,6 @@ void ServerWindow::receivePackage(DataPackage data)
             for (int id = 0; id < 3; id++)
             {
                 dealCard[id].type = 1;  // deal cards
-//                for (int j = 0; j < 3; j++)
-//                    dealCard[id].playerInfos[j] = PlayerInfo(j, 17, "?");
                 dealCard[id].playerInfo = playerInfo;
                 for (int i = 0; i < 17; i++)
                     dealCard[id].cards.push_back(cardVector[i + 17 * id]);
@@ -235,10 +237,3 @@ void ServerWindow::decideLandlord(DataPackage data)
         phase.clear();
     }
 }
-
-
-
-//void ServerWindow::readyRead()
-//{
-//    myTool.read(clientSocket);
-//}

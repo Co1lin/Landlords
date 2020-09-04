@@ -6,6 +6,8 @@
 #include <QtNetwork>
 #include <mytools.h>
 
+class ClientWindow;
+
 namespace Ui {
 class ServerWindow;
 }
@@ -31,7 +33,7 @@ private:
 
     QTcpServer* serverSocket;
     QVector<QTcpSocket*> sockets;
-    //int confirmed;
+    ClientWindow* myself;
     MyTools myTool;
     QVector<Card> cardVector;
     QVector<PlayerInfo> playerInfo;

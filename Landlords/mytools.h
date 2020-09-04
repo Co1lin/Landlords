@@ -77,6 +77,7 @@ public:
     int id;
     int cardsRemain;
     QString role;
+    QString note;
 
     PlayerInfo()
     {
@@ -87,9 +88,12 @@ public:
 
     QString content()
     {
-        return "<p>id: " + QString::number(id) +
-                "</p><p><span style=\"color:#009900;\">cardsRemain: </span>" + QString::number(cardsRemain) +
-                "</p><p><span style=\"color:#E53333;\">role: " + role + "</span></p>";
+//        return "<p>id: " + QString::number(id) +
+//                "</p><p><span style=\"color:#009900;\">cardsRemain: </span>" + QString::number(cardsRemain) +
+//                "</p><p><span style=\"color:#E53333;\">role: " + role + "</span></p>";
+        return "<p>玩家ID：" + QString::number(id) + " " + note +
+                "<br><span style=\"color:#009900;\">剩余牌数： </span>" + QString::number(cardsRemain) +
+                "<br><span style=\"color:#E53333;\">角色： " + role + "</span></p>";
     }
 
     PlayerInfo(const int _id, const int _cardsRemain, const QString& _role):
@@ -374,8 +378,5 @@ public:
         return card;
     }
 };
-
-
-
 
 #endif // MYTOOLS_H

@@ -55,6 +55,9 @@ public:
         sizePolicy.setVerticalStretch(3);
         sizePolicy.setHeightForWidth(player2GraphicsView->sizePolicy().hasHeightForWidth());
         player2GraphicsView->setSizePolicy(sizePolicy);
+        QBrush brush(QColor(0, 0, 0, 0));
+        brush.setStyle(Qt::NoBrush);
+        player2GraphicsView->setBackgroundBrush(brush);
 
         gridLayout->addWidget(player2GraphicsView, 0, 1, 1, 1);
 
@@ -65,11 +68,17 @@ public:
         sizePolicy1.setVerticalStretch(1);
         sizePolicy1.setHeightForWidth(tableGraphicsView->sizePolicy().hasHeightForWidth());
         tableGraphicsView->setSizePolicy(sizePolicy1);
+        QBrush brush1(QColor(0, 0, 0, 0));
+        brush1.setStyle(Qt::NoBrush);
+        tableGraphicsView->setBackgroundBrush(brush1);
 
         gridLayout->addWidget(tableGraphicsView, 2, 1, 5, 6);
 
         player1GraphicsView = new QGraphicsView(centralwidget);
         player1GraphicsView->setObjectName(QString::fromUtf8("player1GraphicsView"));
+        QBrush brush2(QColor(0, 0, 0, 0));
+        brush2.setStyle(Qt::NoBrush);
+        player1GraphicsView->setBackgroundBrush(brush2);
 
         gridLayout->addWidget(player1GraphicsView, 0, 7, 1, 1);
 
@@ -80,6 +89,9 @@ public:
         sizePolicy2.setVerticalStretch(6);
         sizePolicy2.setHeightForWidth(myCardsGraphicsView->sizePolicy().hasHeightForWidth());
         myCardsGraphicsView->setSizePolicy(sizePolicy2);
+        QBrush brush3(QColor(0, 0, 0, 0));
+        brush3.setStyle(Qt::NoBrush);
+        myCardsGraphicsView->setBackgroundBrush(brush3);
 
         gridLayout->addWidget(myCardsGraphicsView, 8, 0, 1, 8);
 
@@ -92,6 +104,9 @@ public:
         bottomCardsGraphicsView = new QGraphicsView(centralwidget);
         bottomCardsGraphicsView->setObjectName(QString::fromUtf8("bottomCardsGraphicsView"));
         bottomCardsGraphicsView->setLayoutDirection(Qt::LeftToRight);
+        QBrush brush4(QColor(0, 0, 0, 0));
+        brush4.setStyle(Qt::NoBrush);
+        bottomCardsGraphicsView->setBackgroundBrush(brush4);
         bottomCardsGraphicsView->setInteractive(true);
 
         gridLayout->addWidget(bottomCardsGraphicsView, 0, 4, 1, 1);
@@ -108,18 +123,24 @@ public:
 
         noPushButton = new QPushButton(centralwidget);
         noPushButton->setObjectName(QString::fromUtf8("noPushButton"));
-        sizePolicy3.setHeightForWidth(noPushButton->sizePolicy().hasHeightForWidth());
-        noPushButton->setSizePolicy(sizePolicy3);
+        QSizePolicy sizePolicy4(QSizePolicy::Minimum, QSizePolicy::Preferred);
+        sizePolicy4.setHorizontalStretch(0);
+        sizePolicy4.setVerticalStretch(1);
+        sizePolicy4.setHeightForWidth(noPushButton->sizePolicy().hasHeightForWidth());
+        noPushButton->setSizePolicy(sizePolicy4);
 
         gridLayout->addWidget(noPushButton, 7, 1, 1, 1);
 
         player0GraphicsView = new QGraphicsView(centralwidget);
         player0GraphicsView->setObjectName(QString::fromUtf8("player0GraphicsView"));
-        QSizePolicy sizePolicy4(QSizePolicy::Preferred, QSizePolicy::Preferred);
-        sizePolicy4.setHorizontalStretch(0);
-        sizePolicy4.setVerticalStretch(0);
-        sizePolicy4.setHeightForWidth(player0GraphicsView->sizePolicy().hasHeightForWidth());
-        player0GraphicsView->setSizePolicy(sizePolicy4);
+        QSizePolicy sizePolicy5(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy5.setHorizontalStretch(0);
+        sizePolicy5.setVerticalStretch(0);
+        sizePolicy5.setHeightForWidth(player0GraphicsView->sizePolicy().hasHeightForWidth());
+        player0GraphicsView->setSizePolicy(sizePolicy5);
+        QBrush brush5(QColor(0, 0, 0, 0));
+        brush5.setStyle(Qt::NoBrush);
+        player0GraphicsView->setBackgroundBrush(brush5);
 
         gridLayout->addWidget(player0GraphicsView, 4, 7, 3, 1);
 

@@ -19,6 +19,8 @@ ConnetWindow::~ConnetWindow()
 void ConnetWindow::on_serverPushButton_clicked()
 {
     auto serverWindow = new ServerWindow();
+    serverWindow->move(this->pos());
+    serverWindow->resize(this->size());
     serverWindow->show();
     this->close();
 }
@@ -26,6 +28,8 @@ void ConnetWindow::on_serverPushButton_clicked()
 void ConnetWindow::on_clientPushButton_clicked()
 {
     auto clientWindow = new ClientWindow();
+    clientWindow->move(this->pos());
+    clientWindow->resize(this->size());
     clientWindow->show();
     this->close();
 }

@@ -23,6 +23,15 @@
         <verstretch>3</verstretch>
        </sizepolicy>
       </property>
+      <property name="backgroundBrush">
+       <brush brushstyle="NoBrush">
+        <color alpha="0">
+         <red>0</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </brush>
+      </property>
      </widget>
     </item>
     <item row="2" column="1" rowspan="5" colspan="6">
@@ -33,10 +42,29 @@
         <verstretch>1</verstretch>
        </sizepolicy>
       </property>
+      <property name="backgroundBrush">
+       <brush brushstyle="NoBrush">
+        <color alpha="0">
+         <red>0</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </brush>
+      </property>
      </widget>
     </item>
     <item row="0" column="7">
-     <widget class="QGraphicsView" name="player1GraphicsView"/>
+     <widget class="QGraphicsView" name="player1GraphicsView">
+      <property name="backgroundBrush">
+       <brush brushstyle="NoBrush">
+        <color alpha="0">
+         <red>0</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </brush>
+      </property>
+     </widget>
     </item>
     <item row="8" column="0" colspan="8">
      <widget class="QGraphicsView" name="myCardsGraphicsView">
@@ -45,6 +73,15 @@
         <horstretch>0</horstretch>
         <verstretch>6</verstretch>
        </sizepolicy>
+      </property>
+      <property name="backgroundBrush">
+       <brush brushstyle="NoBrush">
+        <color alpha="0">
+         <red>0</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </brush>
       </property>
      </widget>
     </item>
@@ -62,6 +99,15 @@
      <widget class="QGraphicsView" name="bottomCardsGraphicsView">
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="backgroundBrush">
+       <brush brushstyle="NoBrush">
+        <color alpha="0">
+         <red>0</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </brush>
       </property>
       <property name="interactive">
        <bool>true</bool>
@@ -86,7 +132,7 @@
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
         <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
+        <verstretch>1</verstretch>
        </sizepolicy>
       </property>
       <property name="text">
@@ -101,6 +147,15 @@
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="backgroundBrush">
+       <brush brushstyle="NoBrush">
+        <color alpha="0">
+         <red>0</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </brush>
       </property>
      </widget>
     </item>
