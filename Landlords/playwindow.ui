@@ -13,27 +13,14 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">#PlayWindow{border-image:url(:/images/bg.png);}</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">background-color: transparent</string>
+   </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="1">
-     <widget class="QGraphicsView" name="player2GraphicsView">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>3</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="backgroundBrush">
-       <brush brushstyle="NoBrush">
-        <color alpha="0">
-         <red>0</red>
-         <green>0</green>
-         <blue>0</blue>
-        </color>
-       </brush>
-      </property>
-     </widget>
-    </item>
     <item row="2" column="1" rowspan="5" colspan="6">
      <widget class="QGraphicsView" name="tableGraphicsView">
       <property name="sizePolicy">
@@ -53,25 +40,25 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="7">
-     <widget class="QGraphicsView" name="player1GraphicsView">
-      <property name="backgroundBrush">
-       <brush brushstyle="NoBrush">
-        <color alpha="0">
-         <red>0</red>
-         <green>0</green>
-         <blue>0</blue>
-        </color>
-       </brush>
+    <item row="7" column="4" colspan="2">
+     <widget class="QLabel" name="noticeLabel">
+      <property name="styleSheet">
+       <string notr="true">color: red</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
-    <item row="8" column="0" colspan="8">
-     <widget class="QGraphicsView" name="myCardsGraphicsView">
+    <item row="4" column="7" rowspan="3">
+     <widget class="QGraphicsView" name="player0GraphicsView">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>0</horstretch>
-        <verstretch>6</verstretch>
+        <verstretch>0</verstretch>
        </sizepolicy>
       </property>
       <property name="backgroundBrush">
@@ -82,16 +69,6 @@
          <blue>0</blue>
         </color>
        </brush>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="4" colspan="2">
-     <widget class="QLabel" name="noticeLabel">
-      <property name="text">
-       <string>Notice</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
@@ -114,6 +91,63 @@
       </property>
      </widget>
     </item>
+    <item row="0" column="7">
+     <widget class="QGraphicsView" name="player1GraphicsView">
+      <property name="backgroundBrush">
+       <brush brushstyle="NoBrush">
+        <color alpha="0">
+         <red>0</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </brush>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QGraphicsView" name="player2GraphicsView">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>3</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="backgroundBrush">
+       <brush brushstyle="NoBrush">
+        <color alpha="0">
+         <red>0</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </brush>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0" colspan="8">
+     <widget class="QGraphicsView" name="myCardsGraphicsView">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>6</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="backgroundBrush">
+       <brush brushstyle="NoBrush">
+        <color alpha="0">
+         <red>0</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </brush>
+      </property>
+     </widget>
+    </item>
     <item row="7" column="7">
      <widget class="QPushButton" name="yesPushButton">
       <property name="sizePolicy">
@@ -121,6 +155,24 @@
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">#yesPushButton{
+background-color: rgb(253, 128, 8);
+color: white;
+font-weight: bold;
+font-size: 20px;
+border-width: 0px;
+border-radius: 10px;
+}
+#yesPushButton:pressed
+{
+background-color: rgb(179, 98, 22);
+}
+#yesPushButton:disabled
+{
+background-color: rgb(102, 102, 102);
+}</string>
       </property>
       <property name="text">
        <string>Yes</string>
@@ -135,27 +187,27 @@
         <verstretch>1</verstretch>
        </sizepolicy>
       </property>
+      <property name="styleSheet">
+       <string notr="true">#noPushButton
+{
+color: white;
+background-color: rgb(15, 128, 255);
+font-weight: bold;
+font-size: 20px;
+border-width: 0px;
+border-radius: 10px;
+}
+#noPushButton:disabled
+{
+background-color: #708090;
+}
+#noPushButton:pressed
+{
+background-color: rgb(71, 119, 179);
+}</string>
+      </property>
       <property name="text">
        <string>No</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="7" rowspan="3">
-     <widget class="QGraphicsView" name="player0GraphicsView">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="backgroundBrush">
-       <brush brushstyle="NoBrush">
-        <color alpha="0">
-         <red>0</red>
-         <green>0</green>
-         <blue>0</blue>
-        </color>
-       </brush>
       </property>
      </widget>
     </item>

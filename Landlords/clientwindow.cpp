@@ -8,7 +8,7 @@ ClientWindow::ClientWindow(QWidget *parent) :
     ui(new Ui::ClientWindow)
 {
     ui->setupUi(this);
-
+    ui->infoLabel->setText(MyTools::getLocalIPString());
     clientSocket = new QTcpSocket();
     // connected with the server
     connect(clientSocket, &QTcpSocket::connected, [=]{ qDebug() << "connected"; });
@@ -28,9 +28,15 @@ ClientWindow::~ClientWindow()
 void ClientWindow::on_pushButton_clicked()
 {
     clientSocket->close();
-    clientSocket->connectToHost(ui->hostLineEdit->text(), ui->portLineEdit->text().toInt());
-    qDebug() << "Client connects to " << ui->hostLineEdit->text() << ": " << ui->portLineEdit->text().toInt();
+    clientSocket->connectToHost(ui->hostLineEdit->text(), ui->portSpinBox->text().toInt());
+    //clientSocket->connectToHost(ui->hostLineEdit->text(), ui->portSpinBox->text().toInt(), QIODevice::ReadWrite, QAbstractSocket::IPv6Protocol);
+    qDebug() << "Client connects to " << ui->hostLineEdit->text() << ": " << ui->portSpinBox->text().toInt();
     ui->pushButton->setEnabled(false);
+}
+
+void ClientWindow::setPort(const int port)
+{
+    ui->portSpinBox->setValue(port);
 }
 
 void ClientWindow::displayError(QAbstractSocket::SocketError) //显示错误
@@ -42,8 +48,8 @@ void ClientWindow::displayError(QAbstractSocket::SocketError) //显示错误
 void ClientWindow::receivePackage(DataPackage data)
 {
     qDebug() << "Received id: " + QString::number(data.id);
-    auto play = new PlayWindow(nullptr, data.id, clientSocket);
-    play->setWindowTitle("Player " + QString::number(data.id));
+    auto play = new PlayWindow(nullptr, data.id, clientSocket, static_cast<bool>(data.msg[0].toInt()));
+    // play->setWindowTitle("Player " + QString::number(data.id));
     play->move(this->pos());
     play->resize(this->size());
     play->show();

@@ -16,6 +16,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
 
@@ -29,7 +30,7 @@ public:
     QLabel *infoLabel;
     QLabel *label;
     QLineEdit *hostLineEdit;
-    QLineEdit *portLineEdit;
+    QSpinBox *portSpinBox;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -45,7 +46,7 @@ public:
         pushButton->setGeometry(QRect(260, 440, 231, 71));
         infoLabel = new QLabel(centralwidget);
         infoLabel->setObjectName(QString::fromUtf8("infoLabel"));
-        infoLabel->setGeometry(QRect(250, 130, 251, 61));
+        infoLabel->setGeometry(QRect(250, 110, 251, 131));
         infoLabel->setAlignment(Qt::AlignCenter);
         label = new QLabel(centralwidget);
         label->setObjectName(QString::fromUtf8("label"));
@@ -53,10 +54,12 @@ public:
         label->setAlignment(Qt::AlignCenter);
         hostLineEdit = new QLineEdit(centralwidget);
         hostLineEdit->setObjectName(QString::fromUtf8("hostLineEdit"));
-        hostLineEdit->setGeometry(QRect(280, 230, 211, 51));
-        portLineEdit = new QLineEdit(centralwidget);
-        portLineEdit->setObjectName(QString::fromUtf8("portLineEdit"));
-        portLineEdit->setGeometry(QRect(280, 310, 211, 51));
+        hostLineEdit->setGeometry(QRect(280, 260, 211, 51));
+        portSpinBox = new QSpinBox(centralwidget);
+        portSpinBox->setObjectName(QString::fromUtf8("portSpinBox"));
+        portSpinBox->setGeometry(QRect(280, 340, 211, 51));
+        portSpinBox->setMinimum(6666);
+        portSpinBox->setMaximum(49151);
         ClientWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(ClientWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -74,11 +77,11 @@ public:
     void retranslateUi(QMainWindow *ClientWindow)
     {
         ClientWindow->setWindowTitle(QCoreApplication::translate("ClientWindow", "MainWindow", nullptr));
-        pushButton->setText(QCoreApplication::translate("ClientWindow", "Start Connecting", nullptr));
+        pushButton->setText(QCoreApplication::translate("ClientWindow", "\345\274\200\345\247\213\350\277\236\346\216\245\346\210\277\351\227\264\n"
+"Start Connecting", nullptr));
         infoLabel->setText(QCoreApplication::translate("ClientWindow", "?:?", nullptr));
         label->setText(QCoreApplication::translate("ClientWindow", "Local infomation:", nullptr));
         hostLineEdit->setText(QCoreApplication::translate("ClientWindow", "127.0.0.1", nullptr));
-        portLineEdit->setText(QCoreApplication::translate("ClientWindow", "6666", nullptr));
     } // retranslateUi
 
 };

@@ -4,7 +4,7 @@
 #include <QDebug>
 #include "mytools.h"
 
-PlayWindow::PlayWindow(QWidget *parent, const int _id, QTcpSocket* _socket) :
+PlayWindow::PlayWindow(QWidget *parent, const int _id, QTcpSocket* _socket, const bool _firstMusic) :
     QMainWindow(parent),
     ui(new Ui::PlayWindow),
     id(_id),
@@ -13,7 +13,10 @@ PlayWindow::PlayWindow(QWidget *parent, const int _id, QTcpSocket* _socket) :
     ui->setupUi(this);
     // UI
     qDebug() << "PlayWindow: " << id;
-    thisTrun = false;
+    setWindowTitle(QStringLiteral("斗地主 Landlord - Player ") + QString::number(id));
+    firstMusic = _firstMusic;
+    //thisTrun = false;
+    ui->noticeLabel->setFont(QFont(QStringLiteral("黑体"), 20));
     ui->yesPushButton->setEnabled(false);
     ui->noPushButton->setEnabled(false);
     myTool.installMyEventFilter(&bottomCardsGraphicsScene);
@@ -40,7 +43,6 @@ PlayWindow::PlayWindow(QWidget *parent, const int _id, QTcpSocket* _socket) :
     ui->player2GraphicsView->show();
     connect(&fitTimer, &QTimer::timeout, this, &PlayWindow::fitView);
     fitTimer.start(33);
-
     // network
     DataPackage confirmReady(id);
     confirmReady.type = 0;
@@ -56,11 +58,23 @@ PlayWindow::~PlayWindow()
     delete ui;
 }
 
+void PlayWindow::playMusic()
+{
+    playlist.addMedia(QUrl("qrc:/media/normal.mp3"));
+    playlist.addMedia(QUrl("qrc:/media/electronic.mp3"));
+    player.setPlaylist(&playlist);
+    if (firstMusic)
+        playlist.next();
+    player.play();
+}
+
 void PlayWindow::receivePackage(DataPackage data)
 {
     qDebug() << "id: " << id;
     if (data.type == 1) // receive dealed 17 cards
     {
+        // music
+        playMusic();
         // data.sortCards();
         foreach (auto& card, data.cards)
         {
@@ -77,13 +91,13 @@ void PlayWindow::receivePackage(DataPackage data)
     {
         if (data.msg[0] == "landlord?")
         {
-            qDebug() << "叫地主？";
-            ui->noticeLabel->setText("叫地主？");
+            qDebug() << QStringLiteral("叫地主？");
+            ui->noticeLabel->setText(QStringLiteral("叫地主？"));
             enableChoice();
         }
         else if (data.msg[0] == "landlord??")
         {
-            ui->noticeLabel->setText("抢地主？");
+            ui->noticeLabel->setText(QStringLiteral("抢地主？"));
             enableChoice();
         }
         else if (data.msg[0] == "have landlord")    // have decide the landlord
@@ -99,14 +113,14 @@ void PlayWindow::receivePackage(DataPackage data)
                 cardItem->setPos(i * 100, 0);
                 i++;
             }
-            if (data.playerInfo[id].role == "地主")  // I am the landlords!
+            if (data.playerInfo[id].role == QStringLiteral("地主"))  // I am the landlords!
             {
                 // add three cards
                 myCards << data.cards;
                 std::sort(myCards.begin(), myCards.end(), std::greater<Card>());
                 showCards();
                 // play cards first
-                ui->noticeLabel->setText("请出牌");
+                ui->noticeLabel->setText(QStringLiteral("请出牌"));
                 ui->yesPushButton->setEnabled(true);
             }
         }
@@ -115,11 +129,12 @@ void PlayWindow::receivePackage(DataPackage data)
     {
         showPlayersInfo(data);
         showTableCards(data);
+        tmpData = data;
         if (data.msg.size() == 2 && data.msg.last() == "passed")
         {
             auto passed = new QGraphicsTextItem();
-            passed->setFont(QFont("黑体", 30));
-            passed->setHtml("<p>上一玩家不出</p>");
+            passed->setFont(QFont(QStringLiteral("黑体"), 30));
+            passed->setHtml(QStringLiteral("<p>上一玩家不出</p>"));
             tableGraphicsScene.addItem(passed);
             passed->setPos(tableGraphicsScene.sceneRect().width() / 2, 0);
         }
@@ -132,18 +147,16 @@ void PlayWindow::receivePackage(DataPackage data)
             enableChoice();
             if (data.cards.empty())
                 ui->noPushButton->setEnabled(false);
-            ui->noticeLabel->setText("请出牌");
-            tmpData = data;
+            ui->noticeLabel->setText(QStringLiteral("请出牌"));
         }
         else if (data.msg[0] == "end!")
         {
             if (data.playerInfo[id].role == data.msg[1])
-                ui->noticeLabel->setText(data.msg[1] + "获胜！" + "    重新开始？");
+                ui->noticeLabel->setText(data.msg[1] + QStringLiteral("获胜！") + QStringLiteral("    重新开始？"));
             else
-                ui->noticeLabel->setText(data.playerInfo[id].role + "输了(o_ _)ﾉ" + "    重新开始？");
+                ui->noticeLabel->setText(data.playerInfo[id].role + QStringLiteral("输了(o_ _)ﾉ") + QStringLiteral("    重新开始？"));
             enableChoice();
         }
-
     }
 }
 
@@ -171,7 +184,7 @@ void PlayWindow::showPlayersInfo(const DataPackage& data, const int _id)
             playersInfoScene[i]->clear();
             auto playerInfo = new PlayerInfo(data.playerInfo[i]);
             if (i == id)
-                playerInfo->note = "(Me)";
+                playerInfo->setNote("(Me)");
             playersInfoScene[i]->addItem(playerInfo);
         }
     }
@@ -180,7 +193,7 @@ void PlayWindow::showPlayersInfo(const DataPackage& data, const int _id)
         playersInfoScene[_id]->clear();
         auto playerInfo = new PlayerInfo(data.playerInfo[_id]);
         if (_id == id)
-            playerInfo->note = "(Me)";
+            playerInfo->setNote("(Me)");
         playersInfoScene[_id]->addItem(playerInfo);
     }
 }
@@ -204,10 +217,12 @@ void PlayWindow::showTableCards(const DataPackage &data)
 
 void PlayWindow::fitView()
 {
+    qDebug() << "fitView!";
     auto rect = myCardsGraphicsScene.sceneRect();
     auto delta = rect.height() / 10;
     rect.setHeight(rect.height() + delta);
-    ui->myCardsGraphicsView->fitInView(rect, Qt::KeepAspectRatio);
+    ui->myCardsGraphicsView->setAlignment(Qt::AlignCenter);
+    ui->myCardsGraphicsView->fitInView(myCardsGraphicsScene.sceneRect(), Qt::KeepAspectRatio);
 
     ui->bottomCardsGraphicsView->fitInView(bottomCardsGraphicsScene.sceneRect(), Qt::KeepAspectRatio);
 
@@ -223,7 +238,7 @@ void PlayWindow::fitView()
 
 void PlayWindow::addBlock()
 {
-    block = new QGraphicsRectItem(0, 0, 17 * 60, 50);
+    block = new QGraphicsRectItem(0, 0, 50, 50);
     myCardsGraphicsScene.addItem(block);
     block->setPen(QPen(Qt::transparent));
     block->setPos(0, 0);
@@ -243,16 +258,16 @@ void PlayWindow::disableChoice()
 
 void PlayWindow::on_yesPushButton_clicked()
 {
-    if (ui->noticeLabel->text() == "叫地主？" ||
-        ui->noticeLabel->text() == "抢地主？")
+    if (ui->noticeLabel->text() == QStringLiteral("叫地主？") ||
+        ui->noticeLabel->text() == QStringLiteral("抢地主？"))
     {
         DataPackage dataToSend(id);
         dataToSend.type = 3;
         dataToSend.msg << "yes";
         myTool.send(playSocket, dataToSend);
     }
-    else if (ui->noticeLabel->text() == "请出牌" ||
-             ui->noticeLabel->text() == "出牌不符合规则！")
+    else if (ui->noticeLabel->text() == QStringLiteral("请出牌") ||
+             ui->noticeLabel->text() == QStringLiteral("出牌不符合规则！"))
     {
         if (beat(tmpData.cards))
         {
@@ -276,40 +291,41 @@ void PlayWindow::on_yesPushButton_clicked()
         }
         else
         {
-            ui->noticeLabel->setText("出牌不符合规则！");
+            ui->noticeLabel->setText(QStringLiteral("出牌不符合规则！"));
             return;
         }
     }
-    else if (ui->noticeLabel->text().mid(0, 2) == "农民" ||
-             ui->noticeLabel->text().mid(0, 2) == "地主")
+    else if (ui->noticeLabel->text().mid(0, 2) == QStringLiteral("农民") ||
+             ui->noticeLabel->text().mid(0, 2) == QStringLiteral("地主"))
     {
         // restart
         disconnect(&fitTimer, &QTimer::timeout, this, &PlayWindow::fitView);
         disconnect(playSocket, &QTcpSocket::readyRead, this, &PlayWindow::readyRead);
         disconnect(&myTool, &MyTools::transferPackage, this, &PlayWindow::receivePackage);
-        auto play = new PlayWindow(nullptr, id, playSocket);
+        player.stop();
+        auto play = new PlayWindow(nullptr, id, playSocket, !firstMusic);
         play->setWindowTitle("Player " + QString::number(id));
         play->move(this->pos());
         play->resize(this->size());
         play->show();
         this->close();
     }
-    ui->noticeLabel->setText("等待");
+    ui->noticeLabel->setText(QStringLiteral("等待"));
     disableChoice();
 }
 
 void PlayWindow::on_noPushButton_clicked()
 {
-    if (ui->noticeLabel->text() == "叫地主？" ||
-        ui->noticeLabel->text() == "抢地主？")
+    if (ui->noticeLabel->text() == QStringLiteral("叫地主？") ||
+        ui->noticeLabel->text() == QStringLiteral("抢地主？"))
     {
         DataPackage dataToSend(id);
         dataToSend.type = 3;
         dataToSend.msg << "no";
         myTool.send(playSocket, dataToSend);
     }
-    else if (ui->noticeLabel->text() == "请出牌" ||
-             ui->noticeLabel->text() == "出牌不符合规则！")
+    else if (ui->noticeLabel->text() == QStringLiteral("请出牌") ||
+             ui->noticeLabel->text() == QStringLiteral("出牌不符合规则！"))
     {
         // pass
         DataPackage dataToSend(id);
@@ -317,8 +333,8 @@ void PlayWindow::on_noPushButton_clicked()
         dataToSend.msg << "pass";
         myTool.send(playSocket, dataToSend);
     }
-    else if (ui->noticeLabel->text() == "农民" ||
-             ui->noticeLabel->text() == "地主")
+    else if (ui->noticeLabel->text() == QStringLiteral("农民") ||
+             ui->noticeLabel->text() == QStringLiteral("地主"))
     {
         exit(0);
     }

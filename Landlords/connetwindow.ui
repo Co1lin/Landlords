@@ -24,7 +24,8 @@
        </sizepolicy>
       </property>
       <property name="text">
-       <string>Please choose a working type:</string>
+       <string>请选择是否需要开房间
+Please choose a working type:</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -40,7 +41,7 @@
        </sizepolicy>
       </property>
       <property name="text">
-       <string>Server</string>
+       <string>我开房间</string>
       </property>
      </widget>
     </item>
@@ -53,7 +54,7 @@
        </sizepolicy>
       </property>
       <property name="text">
-       <string>Client</string>
+       <string>我连接别人的房间</string>
       </property>
      </widget>
     </item>

@@ -52,11 +52,6 @@ public:
         return number == _y.number;
     }
 
-//    bool operator==(const Card& _y)
-//    {
-//        return number == _y.number;
-//    }
-
     friend QDataStream& operator>>(QDataStream& in, Card& _card)
     {
         in >> _card.pattern >> _card.number;
@@ -88,11 +83,8 @@ public:
 
     QString content()
     {
-//        return "<p>id: " + QString::number(id) +
-//                "</p><p><span style=\"color:#009900;\">cardsRemain: </span>" + QString::number(cardsRemain) +
-//                "</p><p><span style=\"color:#E53333;\">role: " + role + "</span></p>";
-        return "<p>玩家ID：" + QString::number(id) + " " + note +
-                "<br><span style=\"color:#009900;\">剩余牌数： </span>" + QString::number(cardsRemain) +
+        return "<p><span style=\"color:#FFC0CB;\">玩家ID：" + QString::number(id) + " " + note + "</span>" +
+                "<br><span style=\"color:#FFFF00;\">剩余牌数： " + QString::number(cardsRemain) + "</span>" +
                 "<br><span style=\"color:#E53333;\">角色： " + role + "</span></p>";
     }
 
@@ -107,6 +99,12 @@ public:
         id = _playerInfo.id;
         cardsRemain = _playerInfo.cardsRemain;
         role = _playerInfo.role;
+        setHtml(content());
+    }
+
+    void setNote(const QString &_note)
+    {
+        note = _note;
         setHtml(content());
     }
 
@@ -132,7 +130,6 @@ public:
         return out;
     }
 };
-
 
 class DataPackage
 {
@@ -196,6 +193,33 @@ protected:
 
 public:
     MyTools();
+
+    static QVector<QString> getLocalIP()
+    {
+        QVector<QString> ipv4, ipv6;
+        QHostInfo info = QHostInfo::fromName(QHostInfo::localHostName());
+        foreach (auto addr, info.addresses())
+        {
+            if (addr.protocol() == QAbstractSocket::IPv4Protocol)
+                ipv4 << addr.toString();
+            else if (addr.protocol() == QAbstractSocket::IPv6Protocol)
+                ipv6 << addr.toString();
+        }
+        ipv4 << ipv6;
+        return ipv4;
+    }
+
+    static QString getLocalIPString()
+    {
+        QString ipInfo;
+        auto ipVec = getLocalIP();
+        foreach (auto& ip, ipVec)
+        {
+            ipInfo += ip;
+            ipInfo += "\n";
+        }
+        return ipInfo;
+    }
 
     static int nextId(const int _id)
     {

@@ -18,6 +18,7 @@ public:
     ~ClientWindow();
 
     void clickConnectButton();
+    void setPort(const int port);
 
 private slots:
     void on_pushButton_clicked();

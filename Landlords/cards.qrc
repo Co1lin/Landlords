@@ -1,11 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>cards/C10.png</file>
-        <file>cards/C11.png</file>
-        <file>cards/C12.png</file>
-        <file>cards/C13.png</file>
-        <file>cards/C14.png</file>
-        <file>cards/C15.png</file>
         <file>cards/C3.png</file>
         <file>cards/C4.png</file>
         <file>cards/C5.png</file>
@@ -13,12 +7,12 @@
         <file>cards/C7.png</file>
         <file>cards/C8.png</file>
         <file>cards/C9.png</file>
-        <file>cards/D10.png</file>
-        <file>cards/D11.png</file>
-        <file>cards/D12.png</file>
-        <file>cards/D13.png</file>
-        <file>cards/D14.png</file>
-        <file>cards/D15.png</file>
+        <file>cards/C10.png</file>
+        <file>cards/C11.png</file>
+        <file>cards/C12.png</file>
+        <file>cards/C13.png</file>
+        <file>cards/C14.png</file>
+        <file>cards/C15.png</file>
         <file>cards/D3.png</file>
         <file>cards/D4.png</file>
         <file>cards/D5.png</file>
@@ -26,12 +20,12 @@
         <file>cards/D7.png</file>
         <file>cards/D8.png</file>
         <file>cards/D9.png</file>
-        <file>cards/H10.png</file>
-        <file>cards/H11.png</file>
-        <file>cards/H12.png</file>
-        <file>cards/H13.png</file>
-        <file>cards/H14.png</file>
-        <file>cards/H15.png</file>
+        <file>cards/D10.png</file>
+        <file>cards/D11.png</file>
+        <file>cards/D12.png</file>
+        <file>cards/D13.png</file>
+        <file>cards/D14.png</file>
+        <file>cards/D15.png</file>
         <file>cards/H3.png</file>
         <file>cards/H4.png</file>
         <file>cards/H5.png</file>
@@ -39,14 +33,13 @@
         <file>cards/H7.png</file>
         <file>cards/H8.png</file>
         <file>cards/H9.png</file>
-        <file>cards/K16.png</file>
+        <file>cards/H10.png</file>
+        <file>cards/H11.png</file>
+        <file>cards/H12.png</file>
+        <file>cards/H13.png</file>
+        <file>cards/H14.png</file>
+        <file>cards/H15.png</file>
         <file>cards/K17.png</file>
-        <file>cards/S10.png</file>
-        <file>cards/S11.png</file>
-        <file>cards/S12.png</file>
-        <file>cards/S13.png</file>
-        <file>cards/S14.png</file>
-        <file>cards/S15.png</file>
         <file>cards/S3.png</file>
         <file>cards/S4.png</file>
         <file>cards/S5.png</file>
@@ -54,5 +47,66 @@
         <file>cards/S7.png</file>
         <file>cards/S8.png</file>
         <file>cards/S9.png</file>
+        <file>cards/S10.png</file>
+        <file>cards/S11.png</file>
+        <file>cards/S12.png</file>
+        <file>cards/S13.png</file>
+        <file>cards/S14.png</file>
+        <file>cards/S15.png</file>
+        <file>cards/K16.png</file>
+        <file>cards/old/C10.png</file>
+        <file>cards/old/C11.png</file>
+        <file>cards/old/C12.png</file>
+        <file>cards/old/C13.png</file>
+        <file>cards/old/C14.png</file>
+        <file>cards/old/C15.png</file>
+        <file>cards/old/C3.png</file>
+        <file>cards/old/C4.png</file>
+        <file>cards/old/C5.png</file>
+        <file>cards/old/C6.png</file>
+        <file>cards/old/C7.png</file>
+        <file>cards/old/C8.png</file>
+        <file>cards/old/C9.png</file>
+        <file>cards/old/D10.png</file>
+        <file>cards/old/D11.png</file>
+        <file>cards/old/D12.png</file>
+        <file>cards/old/D13.png</file>
+        <file>cards/old/D14.png</file>
+        <file>cards/old/D15.png</file>
+        <file>cards/old/D3.png</file>
+        <file>cards/old/D4.png</file>
+        <file>cards/old/D5.png</file>
+        <file>cards/old/D6.png</file>
+        <file>cards/old/D7.png</file>
+        <file>cards/old/D8.png</file>
+        <file>cards/old/D9.png</file>
+        <file>cards/old/H10.png</file>
+        <file>cards/old/H11.png</file>
+        <file>cards/old/H12.png</file>
+        <file>cards/old/H13.png</file>
+        <file>cards/old/H14.png</file>
+        <file>cards/old/H15.png</file>
+        <file>cards/old/H3.png</file>
+        <file>cards/old/H4.png</file>
+        <file>cards/old/H5.png</file>
+        <file>cards/old/H6.png</file>
+        <file>cards/old/H7.png</file>
+        <file>cards/old/H8.png</file>
+        <file>cards/old/H9.png</file>
+        <file>cards/old/K16.png</file>
+        <file>cards/old/K17.png</file>
+        <file>cards/old/S10.png</file>
+        <file>cards/old/S11.png</file>
+        <file>cards/old/S12.png</file>
+        <file>cards/old/S13.png</file>
+        <file>cards/old/S14.png</file>
+        <file>cards/old/S15.png</file>
+        <file>cards/old/S3.png</file>
+        <file>cards/old/S4.png</file>
+        <file>cards/old/S5.png</file>
+        <file>cards/old/S6.png</file>
+        <file>cards/old/S7.png</file>
+        <file>cards/old/S8.png</file>
+        <file>cards/old/S9.png</file>
     </qresource>
 </RCC>

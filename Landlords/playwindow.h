@@ -6,7 +6,8 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGraphicsItem>
-//#include <QTimer>
+#include <QMediaPlayer>
+#include <QMediaPlaylist>
 #include <mytools.h>
 
 namespace Ui {
@@ -18,7 +19,7 @@ class PlayWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit PlayWindow(QWidget *parent = nullptr, const int _id = 0, QTcpSocket* _socket = nullptr);
+    explicit PlayWindow(QWidget *parent = nullptr, const int _id = 0, QTcpSocket* _socket = nullptr, const bool _firstMusic = 0);
     ~PlayWindow();
 
 private slots:
@@ -40,6 +41,10 @@ private:
     QVector<QGraphicsScene*> playersInfoScene;
     QGraphicsRectItem* block;
     QTimer fitTimer;
+    bool firstMusic;
+    QMediaPlaylist playlist;
+    QMediaPlayer player;
+
 
     MyTools myTool;
     int id;
@@ -49,8 +54,6 @@ private:
     QList<CardItem*> selectedCardItems;
     DataPackage tmpData;
 
-    bool thisTrun;
-
     void enableChoice();
     void disableChoice();
     void addBlock();
@@ -58,6 +61,7 @@ private:
     void showTableCards(const DataPackage& data);
     bool beat(const QList<Card>& _lastCards = {});
     QString cardsType(const QList<Card>& cards);
+    void playMusic();
 };
 
 #endif // PLAYWINDOW_H

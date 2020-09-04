@@ -12,8 +12,13 @@ ServerWindow::ServerWindow(QWidget *parent) :
     ui->setupUi(this);
 
     serverSocket = new QTcpServer();
-    //ui->pushButton->click();
-
+    // ui->pushButton->click();
+    // show local IP info
+    auto ipVec = MyTools::getLocalIP();
+    foreach (auto& ip, ipVec)
+    {
+        ui->infoListWidget->addItem(ip);
+    }
 }
 
 ServerWindow::~ServerWindow()
@@ -24,16 +29,21 @@ ServerWindow::~ServerWindow()
 void ServerWindow::on_pushButton_clicked()
 {
     serverSocket->close();
-    if (!serverSocket->listen(QHostAddress::AnyIPv4, 6666))
+    while (true)
     {
-        qDebug() << serverSocket->errorString();
-        return;
+        if (!serverSocket->listen(QHostAddress::Any, static_cast<quint16>(ui->portSpinBox->value())))
+        {
+            qDebug() << serverSocket->errorString();
+            continue;
+        }
+        connect(serverSocket, &QTcpServer::newConnection, this, &ServerWindow::acceptConnection);
+        // confirmed = 0;
+        myself = new ClientWindow();
+        myself->setPort(ui->portSpinBox->value());
+        myself->clickConnectButton();    // need to run after complete debugging!
+        ui->pushButton->setEnabled(false);
+        break;
     }
-    connect(serverSocket, &QTcpServer::newConnection, this, &ServerWindow::acceptConnection);
-    // confirmed = 0;
-    myself = new ClientWindow();
-    myself->clickConnectButton();    // need to run after complete debugging!
-    ui->pushButton->setEnabled(false);
 }
 
 void ServerWindow::acceptConnection()
@@ -46,7 +56,8 @@ void ServerWindow::acceptConnection()
         qDebug() << "Three players are here!";
         connect(&myTool, &MyTools::transferPackage, this, &ServerWindow::receivePackage);
         DataPackage sendId;
-        sendId.id = 0;
+        sendId.id = 0;  // use this variable to pass id info
+        sendId.msg << QString::number(QRandomGenerator::global()->bounded(2));
         foreach (auto* socket, sockets)
         {
             connect(socket, &QTcpSocket::readyRead, this, [=]{ myTool.read(socket); });

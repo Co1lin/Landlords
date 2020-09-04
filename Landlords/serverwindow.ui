@@ -24,16 +24,17 @@
      </rect>
     </property>
     <property name="text">
-     <string>Start Listening</string>
+     <string>开房间并等待其它玩家进入
+Start Listening</string>
     </property>
    </widget>
    <widget class="QListWidget" name="listWidget">
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>210</y>
+      <y>220</y>
       <width>256</width>
-      <height>192</height>
+      <height>91</height>
      </rect>
     </property>
    </widget>
@@ -41,7 +42,7 @@
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>40</y>
+      <y>30</y>
       <width>251</width>
       <height>61</height>
      </rect>
@@ -53,20 +54,46 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="infoLabel">
+   <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>120</y>
+      <y>300</y>
       <width>251</width>
       <height>61</height>
      </rect>
     </property>
     <property name="text">
-     <string>?:?</string>
+     <string>Listen port:</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="portSpinBox">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>360</y>
+      <width>141</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="minimum">
+     <number>6666</number>
+    </property>
+    <property name="maximum">
+     <number>49151</number>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="infoListWidget">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>80</y>
+      <width>256</width>
+      <height>131</height>
+     </rect>
     </property>
    </widget>
   </widget>

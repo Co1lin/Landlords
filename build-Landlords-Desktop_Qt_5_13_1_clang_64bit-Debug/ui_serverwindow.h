@@ -16,6 +16,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
 
@@ -28,7 +29,9 @@ public:
     QPushButton *pushButton;
     QListWidget *listWidget;
     QLabel *label;
-    QLabel *infoLabel;
+    QLabel *label_2;
+    QSpinBox *portSpinBox;
+    QListWidget *infoListWidget;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -44,15 +47,23 @@ public:
         pushButton->setGeometry(QRect(280, 430, 231, 71));
         listWidget = new QListWidget(centralwidget);
         listWidget->setObjectName(QString::fromUtf8("listWidget"));
-        listWidget->setGeometry(QRect(270, 210, 256, 192));
+        listWidget->setGeometry(QRect(270, 220, 256, 91));
         label = new QLabel(centralwidget);
         label->setObjectName(QString::fromUtf8("label"));
-        label->setGeometry(QRect(270, 40, 251, 61));
+        label->setGeometry(QRect(270, 30, 251, 61));
         label->setAlignment(Qt::AlignCenter);
-        infoLabel = new QLabel(centralwidget);
-        infoLabel->setObjectName(QString::fromUtf8("infoLabel"));
-        infoLabel->setGeometry(QRect(270, 120, 251, 61));
-        infoLabel->setAlignment(Qt::AlignCenter);
+        label_2 = new QLabel(centralwidget);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+        label_2->setGeometry(QRect(270, 300, 251, 61));
+        label_2->setAlignment(Qt::AlignCenter);
+        portSpinBox = new QSpinBox(centralwidget);
+        portSpinBox->setObjectName(QString::fromUtf8("portSpinBox"));
+        portSpinBox->setGeometry(QRect(330, 360, 141, 51));
+        portSpinBox->setMinimum(6666);
+        portSpinBox->setMaximum(49151);
+        infoListWidget = new QListWidget(centralwidget);
+        infoListWidget->setObjectName(QString::fromUtf8("infoListWidget"));
+        infoListWidget->setGeometry(QRect(270, 80, 256, 131));
         ServerWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(ServerWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -70,9 +81,10 @@ public:
     void retranslateUi(QMainWindow *ServerWindow)
     {
         ServerWindow->setWindowTitle(QCoreApplication::translate("ServerWindow", "MainWindow", nullptr));
-        pushButton->setText(QCoreApplication::translate("ServerWindow", "Start Listening", nullptr));
+        pushButton->setText(QCoreApplication::translate("ServerWindow", "\345\274\200\346\210\277\351\227\264\345\271\266\347\255\211\345\276\205\345\205\266\345\256\203\347\216\251\345\256\266\350\277\233\345\205\245\n"
+"Start Listening", nullptr));
         label->setText(QCoreApplication::translate("ServerWindow", "Local Infomation:", nullptr));
-        infoLabel->setText(QCoreApplication::translate("ServerWindow", "?:?", nullptr));
+        label_2->setText(QCoreApplication::translate("ServerWindow", "Listen port:", nullptr));
     } // retranslateUi
 
 };

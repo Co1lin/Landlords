@@ -86,9 +86,10 @@ public:
     void retranslateUi(QMainWindow *ConnetWindow)
     {
         ConnetWindow->setWindowTitle(QCoreApplication::translate("ConnetWindow", "MainWindow", nullptr));
-        label->setText(QCoreApplication::translate("ConnetWindow", "Please choose a working type:", nullptr));
-        serverPushButton->setText(QCoreApplication::translate("ConnetWindow", "Server", nullptr));
-        clientPushButton->setText(QCoreApplication::translate("ConnetWindow", "Client", nullptr));
+        label->setText(QCoreApplication::translate("ConnetWindow", "\350\257\267\351\200\211\346\213\251\346\230\257\345\220\246\351\234\200\350\246\201\345\274\200\346\210\277\351\227\264\n"
+"Please choose a working type:", nullptr));
+        serverPushButton->setText(QCoreApplication::translate("ConnetWindow", "\346\210\221\345\274\200\346\210\277\351\227\264", nullptr));
+        clientPushButton->setText(QCoreApplication::translate("ConnetWindow", "\346\210\221\350\277\236\346\216\245\345\210\253\344\272\272\347\232\204\346\210\277\351\227\264", nullptr));
     } // retranslateUi
 
 };
