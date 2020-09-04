@@ -1,4 +1,4 @@
-#include "playwindow.h"
+﻿#include "playwindow.h"
 #include "ui_playwindow.h"
 
 #include <QDebug>
@@ -217,7 +217,7 @@ void PlayWindow::showTableCards(const DataPackage &data)
 
 void PlayWindow::fitView()
 {
-    qDebug() << "fitView!";
+    // qDebug() << "fitView!";
     auto rect = myCardsGraphicsScene.sceneRect();
     auto delta = rect.height() / 10;
     rect.setHeight(rect.height() + delta);
@@ -333,12 +333,12 @@ void PlayWindow::on_noPushButton_clicked()
         dataToSend.msg << "pass";
         myTool.send(playSocket, dataToSend);
     }
-    else if (ui->noticeLabel->text() == QStringLiteral("农民") ||
-             ui->noticeLabel->text() == QStringLiteral("地主"))
+    else if (ui->noticeLabel->text().mid(0, 2) == QStringLiteral("农民") ||
+             ui->noticeLabel->text().mid(0, 2) == QStringLiteral("地主"))
     {
         exit(0);
     }
-    ui->noticeLabel->setText("等待");
+    ui->noticeLabel->setText(QStringLiteral("等待"));
     disableChoice();
 }
 

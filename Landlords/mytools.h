@@ -1,4 +1,4 @@
-#ifndef MYTOOLS_H
+﻿#ifndef MYTOOLS_H
 #define MYTOOLS_H
 
 #include <QtNetwork>
@@ -83,9 +83,9 @@ public:
 
     QString content()
     {
-        return "<p><span style=\"color:#FFC0CB;\">玩家ID：" + QString::number(id) + " " + note + "</span>" +
-                "<br><span style=\"color:#FFFF00;\">剩余牌数： " + QString::number(cardsRemain) + "</span>" +
-                "<br><span style=\"color:#E53333;\">角色： " + role + "</span></p>";
+        return QStringLiteral("<p><span style=\"color:#FFC0CB;\">玩家ID：") + QString::number(id) + " " + note + "</span>" +
+                QStringLiteral("<br><span style=\"color:#FFFF00;\">剩余牌数： ") + QString::number(cardsRemain) + "</span>" +
+                QStringLiteral("<br><span style=\"color:#E53333;\">角色： ") + role + "</span></p>";
     }
 
     PlayerInfo(const int _id, const int _cardsRemain, const QString& _role):
@@ -237,7 +237,7 @@ public:
     {
         QByteArray bytes;
         QDataStream stream(&bytes, QIODevice::WriteOnly);
-        stream.setVersion(QDataStream::Qt_5_13);
+        stream.setVersion(QDataStream::Qt_5_12);
         stream.setByteOrder(QDataStream::BigEndian);
         stream << qint32(0);
         stream << data;
@@ -252,7 +252,7 @@ public:
     {
         DataPackage data;
         QDataStream in(socket);
-        in.setVersion(QDataStream::Qt_5_13);
+        in.setVersion(QDataStream::Qt_5_12);
         in.setByteOrder(QDataStream::BigEndian);
         static qint32 bytesToRead = 0;
         //qDebug() << "socket->bytesAvailable(): " << socket->bytesAvailable();
@@ -315,7 +315,7 @@ public:
                 number = iter.key();
             }
         }
-        return QPair(number, result);
+        return {number, result};
     }
 
     static QPair<int, int> hasStraignt(QList<Card> cards)
@@ -329,11 +329,11 @@ public:
             if (iter->number == start + i)
                 i++;
             else
-                return QPair(-1, -1);
+                return {-1, -1};
         }
         if (3 <= start && end <= 14)
-            return QPair(start, end);
-        return QPair(start, end);
+            return {start, end};
+        return {start, end};
     }
 
     static QPair<int, int> hasStraignt(QList<int> cards)
@@ -347,12 +347,12 @@ public:
             if (*iter == start + i)
                 i++;
             else
-                return QPair(-1, -1);
+                return {-1, -1};
         }
         if (3 <= start && end <= 14)
-            return QPair(start, end);
+            return {start, end};
         else
-            return QPair(-1, -1);
+            return {-1, -1};
     }
 };
 

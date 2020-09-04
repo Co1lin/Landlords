@@ -44,7 +44,8 @@ public:
         if (PlayWindow->objectName().isEmpty())
             PlayWindow->setObjectName(QString::fromUtf8("PlayWindow"));
         PlayWindow->resize(800, 600);
-        PlayWindow->setStyleSheet(QString::fromUtf8("#PlayWindow{border-image:url(:/images/bg.png);}"));
+        PlayWindow->setStyleSheet(QString::fromUtf8("#PlayWindow{border-image:url(:/images/bg.png);}\n"
+"QGraphicsView{border:null;}"));
         centralwidget = new QWidget(PlayWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         centralwidget->setStyleSheet(QString::fromUtf8("background-color: transparent"));
@@ -57,6 +58,7 @@ public:
         sizePolicy.setVerticalStretch(1);
         sizePolicy.setHeightForWidth(tableGraphicsView->sizePolicy().hasHeightForWidth());
         tableGraphicsView->setSizePolicy(sizePolicy);
+        tableGraphicsView->setLineWidth(0);
         QBrush brush(QColor(0, 0, 0, 0));
         brush.setStyle(Qt::NoBrush);
         tableGraphicsView->setBackgroundBrush(brush);
@@ -185,7 +187,7 @@ public:
         PlayWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(PlayWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 800, 22));
+        menubar->setGeometry(QRect(0, 0, 800, 23));
         PlayWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(PlayWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
