@@ -62,6 +62,7 @@ void PlayWindow::playMusic()
 {
     playlist.addMedia(QUrl("qrc:/media/normal.mp3"));
     playlist.addMedia(QUrl("qrc:/media/electronic.mp3"));
+    playlist.setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
     player.setPlaylist(&playlist);
     if (firstMusic)
         playlist.next();
@@ -127,7 +128,7 @@ void PlayWindow::receivePackage(DataPackage data)
     }
     else if (data.type == 2)    // playing game
     {
-        if (data.msg.size() == 3 && data.msg[1] == "passed")
+        if (data.msg[1] == "passed")
         {
             auto passed = new QGraphicsTextItem();
             passed->setFont(QFont(QStringLiteral("黑体"), 30));
@@ -135,6 +136,10 @@ void PlayWindow::receivePackage(DataPackage data)
             tableGraphicsScene.addItem(passed);
             passed->setPos(tableGraphicsScene.sceneRect().width() / 2, 0);
             data.playerInfo[data.msg.last().toInt()].setAddition(QStringLiteral("不出"));
+        }
+        else if (data.msg[1] == QStringLiteral("出牌"))
+        {
+            data.playerInfo[data.msg.last().toInt()].setAddition(data.msg[1]);
         }
         showTableCards(data);
         showPlayersInfo(data);

@@ -157,6 +157,7 @@ void ServerWindow::receivePackage(DataPackage data)
         {
             cardToBeat = dataToSend.cards = data.cards; // save the cards played
             playerToBeat = data.id;
+            dataToSend.msg << QStringLiteral("出牌") << QString::number(data.id);
         }
         dataToSend.playerInfo = playerInfo;
         if (data.msg.size() == 1)
